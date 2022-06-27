@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: core/RemoteHREstimator.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: core/RemoteHREstimator.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { ESRCRemoteHR, ESRCHRV, ESRCProgressRatio, ESRCMat } = require("./../ESRCType.js");
+const Heart = require("./../native/sdk/Heart.js");
+
+let instance = null;
+
+/**
+ * RemoteHREstimator class.
+ * 
+ * @author Hyunwoo Lee &lt;lhw4846@esrc.co.kr>
+ * @license Copyright (c) 2022 Emotion Science Research Center all rights reserved.
+ */
+class RemoteHREstimator {
+    /**
+     * @property {didChangedProgressRatioOnRemoteHRCallback} didChangedProgressRatioOnRemoteHRCallback A callback for when progress ratio on remote hr is changed.
+     */
+    didChangedProgressRatioOnRemoteHRCallback;
+    /**
+     * @property {onEstimatedRemoteHRCallback} onEstimatedRemoteHRCallback A callback for when remote hr is estimated.
+     */
+    onEstimatedRemoteHRCallback;
+    /**
+     * @property {didChangedProgressRatioOnHRVCallback} didChangedProgressRatioOnHRVCallback A callback for when progress ratio on HRV is changed
+     */
+    didChangedProgressRatioOnHRVCallback;
+    /**
+     * @property {onAnalyzedHRVCallback} onAnalyzedHRVCallback A callback for when HRV is analyzed.
+     */
+    onAnalyzedHRVCallback;
+
+    /**
+     * @property {boolean} enableRemoteHR Whether estimate remote hr or not.
+     */
+    enableRemoteHR = false;
+    /**
+     * @property {boolean} enableHRV Whether analyze HRV or not.
+     */
+    enableHRV = false;
+
+    /**
+     * RemoteHREstimator constructor.
+     */
+    constructor() {
+        if (instance) {
+            return instance;
+        }
+        instance = this;
+    }
+
+    /**
+     * Initializes remote hr estimator.
+     * @param {boolean} enableRemoteHR Whether estimate remote hr or not.
+     * @param {boolean} enableHRV Whether analyze HRV or not.
+     * @param {callbadidChangedProgressRatioOnRemoteHRCallbackck} didChangedProgressRatioOnRemoteHRCallback A callback for when progress ratio on remote hr is changed.
+     * @param {onEstimatedRemoteHRCallback} onEstimatedRemoteHRCallback A callback for when remote hr is estimated.
+     * @param {didChangedProgressRatioOnHRVCallback} didChangedProgressRatioOnHRVCallback A callback for when progress ratio on HRV is changed
+     * @param {onAnalyzedHRVCallback} onAnalyzedHRVCallback A callback for when HRV is analyzed.
+     * @returns {boolean} Returns true if the initialization succeeded. Otherwise, false.
+     */
+    initialize(enableRemoteHR, enableHRV,
+        didChangedProgressRatioOnRemoteHRCallback, onEstimatedRemoteHRCallback, 
+        didChangedProgressRatioOnHRVCallback, onAnalyzedHRVCallback) {
+        var ret = true;
+
+        // Set property
+        this.enableRemoteHR = enableRemoteHR;
+        this.enableHRV = enableHRV;
+
+        // Set handler
+        this.didChangedProgressRatioOnRemoteHRCallback = didChangedProgressRatioOnRemoteHRCallback ?? undefined;
+        this.onEstimatedRemoteHRCallback = onEstimatedRemoteHRCallback ?? undefined;
+        this.didChangedProgressRatioOnHRVCallback = didChangedProgressRatioOnHRVCallback ?? undefined;
+        this.onAnalyzedHRVCallback = onAnalyzedHRVCallback ?? undefined;
+
+        // Initialize remote hr task
+        ret = Heart.initRemoteHRTask(this.enableRemoteHR, this.enableHRV, 
+            this.didChangedProgressRatioOnRemoteHR, this.onEstimatedRemoteHR, 
+            this.didChangedProgressRatioOnHRV, this.onAnalyzedHRV);
+        // ret = napi.InitRemoteHRTask(this.enableRemoteHR, this.enableHRV);
+
+        return ret;
+    }
+
+    /**
+     * Releases remote hr estimator.
+     * @returns {boolean} Returns true if the release succeeded. Otherwise, false.
+     */
+    release() {
+        var ret = true;
+
+        // Release remote hr task
+        ret = Heart.releaseRemoteHRTask();
+        // ret = napi.ReleaseRemoteHRTask();
+
+        return ret;
+    }
+
+    /**
+     * Feed frame on remote hr task.
+     * @param {ESRCMat} mat ESRCMat instance.
+     */
+    feed(mat) {
+        // Feed frame on remote hr task.
+        Heart.feedOnRemoteHRTask(mat);
+        // napi.FeedOnRemoteHRTask(mat.getId(), frameData, rows, cols, channels,
+        //     this.didChangedProgressRatioOnRemoteHR,
+        //     this.onEstimatedRemoteHR,
+        //     this.didChangedProgressRatioOnHRV,
+        //     this.onAnalyzedHRV);
+    }
+
+    /**
+     * A callback for when progress ratio on remote hr is changed from napi.
+     * @param {number} id Identification. 
+     * @param {number} progress Progress on remote hr.
+     */
+    didChangedProgressRatioOnRemoteHR(id, progress) {
+        // Convert native to ESRCType
+        const progressRatio = new ESRCProgressRatio(id, progress);
+
+        // Callback
+        if (RemoteHREstimator.getInstance().didChangedProgressRatioOnRemoteHRCallback !== undefined) {
+            RemoteHREstimator.getInstance().didChangedProgressRatioOnRemoteHRCallback(progressRatio);
+        }
+    }
+
+    /**
+     * A callback for when remote hr is estimated from napi.
+     * @param {number} id Identification. 
+     * @param {number} hr Heart rate.
+     * @param {number} snr Signal to noise ratio.
+     */
+    onEstimatedRemoteHR(id, hr, snr) {
+        // Convert native to ESRCType
+        const remoteHR = new ESRCRemoteHR(id, hr, snr);
+        
+        // Callback
+        if (RemoteHREstimator.getInstance().onEstimatedRemoteHRCallback !== undefined) {
+            RemoteHREstimator.getInstance().onEstimatedRemoteHRCallback(remoteHR);
+        }
+    }
+
+    /**
+     * A callback for when progress ratio on HRV is changed from napi.
+     * @param {number} id Identification. 
+     * @param {number} progress Progress on HRV.
+     */
+    didChangedProgressRatioOnHRV(id, progress) {
+         // Convert native to ESRCType
+        const progressRatio = new ESRCProgressRatio(id, progress);
+
+        // Callback
+        if (RemoteHREstimator.getInstance().didChangedProgressRatioOnHRVCallback !== undefined) {
+            RemoteHREstimator.getInstance().didChangedProgressRatioOnHRVCallback(progressRatio);
+        }
+    }
+
+    /**
+     * A callback for when HRV is analyzed from native.
+     * @param {number} id Identification.
+     * @param {number} bpm Average of beat per minute (bpm).
+     * @param {number} sdnn Standard deviation of NN intervals (ms).
+     * @param {number} rmssd Root mean squre of successive differences (ms).
+     * @param {number} pnn50 Percentage NN interval 50ms (%).
+     * @param {number} vlf Very low frequency between 0.0033 and 0.04 Hz (ms2). 
+     * @param {number} lf Low frequency between 0.04 and 0.15 Hz (ms2).
+     * @param {number} hf High frequency between 0.15 and 0.4 Hz (ms2).
+     * @param {number} vlfp Ratio of VLF to TP (%).
+     * @param {number} lfp Ratio of LF to TP (%).
+     * @param {number} hfp Ratio of HF to TP (%).
+     * @param {number} tp Total power between 0.0033 and 0.4 Hz (ms2).
+     * @param {number} lnVlf Logarithm of VLF. 
+     * @param {number} lnLf Logarithm of LF.
+     * @param {number} lnHf Logarithm of HF.
+     * @param {number} lnTp Logarithm of TP.
+     * @param {number} normLf Normalized LF (%).
+     * @param {number} normHf Normalized HF (%).
+     * @param {number} lfHf LF/HF (%)
+     * @param {number} cohRatio Coherence ratio.
+     * @param {number} ppiCount PPI count.
+     */
+    onAnalyzedHRV(id, bpm, sdnn, rmssd, pnn50, vlf, lf, hf, vlfp, lfp, hfp, tp, lnVlf, lnLf, lnHf, lnTp, normLf, normHf, lfHf, cohRatio, ppiCount) {
+        // Convert native to ESRCType
+        const hrv = new ESRCHRV(id, bpm, sdnn, rmssd, pnn50, vlf, lf, hf, vlfp, lfp, hfp, tp, lnVlf, lnLf, lnHf, lnTp, normLf, normHf, lfHf, cohRatio, ppiCount);
+
+        // Callback
+        if (RemoteHREstimator.getInstance().onAnalyzedHRVCallback !== undefined) {
+            RemoteHREstimator.getInstance().onAnalyzedHRVCallback(hrv);
+        }
+    }
+
+    /**
+     * RemoteHREstimator instance.
+     * @returns {RemoteHREstimator} Returns RemoteHREstimator instance.
+     */
+    static getInstance() {
+        return new RemoteHREstimator();
+    }
+}
+
+/**
+ * A callback for when progress ratio on remote hr is changed.
+ * @callback didChangedProgressRatioOnRemoteHRCallback
+ * @param {ESRCProgressRatio} progressRatio Progress ratio on remote hr.
+ */
+function didChangedProgressRatioOnRemoteHRCallback(progressRatio) {
+    // Implement this function.
+};
+
+/**
+ * A callback for when remote hr is estimated.
+ * @callback onEstimatedRemoteHRCallback
+ * @param {ESRCRemoteHR} remoteHR Remote hr.
+ */
+function onEstimatedRemoteHRCallback(remoteHR) {
+    // Implement this function.
+};
+
+/**
+ * A callback for when progress ratio on HRV is changed.
+ * @callback didChangedProgressRatioOnHRVCallback
+ * @param {ESRCProgressRatio} progressRatio Progress ratio on HRV.
+ */
+function didChangedProgressRatioOnHRVCallback(progressRatio) {
+    // Implement this function.
+};
+
+
+/**
+ * A callback for when HRV is analyzed.
+ * @callback onAnalyzedHRVCallback
+ * @param {ESRCHRV} hrv HRV.
+ */
+function onAnalyzedHRVCallback(hrv) {
+    // Implement this function.
+};
+
+module.exports = RemoteHREstimator;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ESRCType.html">ESRCType</a></li></ul><h3>Classes</h3><ul><li><a href="APIClient.html">APIClient</a></li><li><a href="BasicFacialExpressionRecognizer.html">BasicFacialExpressionRecognizer</a></li><li><a href="EngagementRecognizer.html">EngagementRecognizer</a></li><li><a href="ESRC.html">ESRC</a></li><li><a href="ESRCHandler.html">ESRCHandler</a></li><li><a href="ESRCLicense.html">ESRCLicense</a></li><li><a href="FaceDetector.html">FaceDetector</a></li><li><a href="FacialActionUnitAnalyzer.html">FacialActionUnitAnalyzer</a></li><li><a href="FacialLandmarkDetector.html">FacialLandmarkDetector</a></li><li><a href="FileManager.html">FileManager</a></li><li><a href="MeasureEnvAnalyzer.html">MeasureEnvAnalyzer</a></li><li><a href="module-ESRCType-ESRCAttention.html">ESRCAttention</a></li><li><a href="module-ESRCType-ESRCBasicFacialExpression.html">ESRCBasicFacialExpression</a></li><li><a href="module-ESRCType-ESRCEngagement.html">ESRCEngagement</a></li><li><a href="module-ESRCType-ESRCFace.html">ESRCFace</a></li><li><a href="module-ESRCType-ESRCFacialActionUnit.html">ESRCFacialActionUnit</a></li><li><a href="module-ESRCType-ESRCFacialLandmark.html">ESRCFacialLandmark</a></li><li><a href="module-ESRCType-ESRCHeadPose.html">ESRCHeadPose</a></li><li><a href="module-ESRCType-ESRCHRV.html">ESRCHRV</a></li><li><a href="module-ESRCType-ESRCMat.html">ESRCMat</a></li><li><a href="module-ESRCType-ESRCMeasureEnv.html">ESRCMeasureEnv</a></li><li><a href="module-ESRCType-ESRCPoint2f.html">ESRCPoint2f</a></li><li><a href="module-ESRCType-ESRCProgressRatio.html">ESRCProgressRatio</a></li><li><a href="module-ESRCType-ESRCProperty.html">ESRCProperty</a></li><li><a href="module-ESRCType-ESRCRemoteHR.html">ESRCRemoteHR</a></li><li><a href="module-ESRCType-ESRCValenceFacialExpression.html">ESRCValenceFacialExpression</a></li><li><a href="OpenCVLoader.html">OpenCVLoader</a></li><li><a href="RemoteHREstimator.html">RemoteHREstimator</a></li><li><a href="ValenceFacialExpressionRecognizer.html">ValenceFacialExpressionRecognizer</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Jun 27 2022 16:21:06 GMT+0900 (대한민국 표준시)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ESRC.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ESRC.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const ESRCType = require("./ESRCType.js");
+const ESRCLicense = require("./ESRCLicense.js");
+const MeasureEnvAnalyzer = require("./core/MeasureEnvAnalyzer.js");
+const FaceDetector = require("./core/FaceDetector.js");
+const FacialLandmarkDetector = require("./core/FacialLandmarkDetector.js");
+const FacialActionUnitAnalyzer = require("./core/FacialActionUnitAnalyzer.js");
+const BasicFacialExpressionRecognizer = require("./core/BasicFacialExpressionRecognizer.js");
+const ValenceFacialExpressionRecognizer = require("./core/ValenceFacialExpressionRecognizer.js");
+const RemoteHREstimator = require("./core/RemoteHREstimator.js");
+const EngagementRecognizer = require("./core/EngagementRecognizer.js");
+const OpenCVLoader = require("./utils/OpenCVLoader.js");
+
+/**
+ * ESRC main class.
+ * 
+ * @author Hyunwoo Lee &lt;lhw4846@esrc.co.kr>
+ * @license Copyright (c) 2022 Emotion Science Research Center all rights reserved.
+ */
+class ESRC {
+    /**
+     * @property {ESRC} instance ESRC instance.
+     * @static
+     */
+    static instance = undefined;
+    /**
+     * @property {string} appId Application ID.
+     */
+    appId;
+    /**
+     * @property {ESRCHandler} handler ESRCHandler handler.
+     */
+    handler;
+    /**
+     * @property {ESRCType.ESRCProperty} property ESRCProperty instance.
+     */
+    static property;
+
+    /**
+     * @property {MeasureEnvAnalyzer} measureEnvAnalyzer Measurement environment analyzer.
+     */
+    measureEnvAnalyzer;
+    /**
+     * @property {FaceDetector} faceDetector Face detector.
+     */
+    faceDetector;
+    /**
+     * @property {FacialLandmarkDetector} facialLandmarkDetector Facial landmark detector.
+     */
+    facialLandmarkDetector;
+    /**
+     * @property {FacialActionUnitAnalyzer} facialActionUnitAnalyzer Facial action unit analyzer.
+     */
+    facialActionUnitAnalyzer;
+    /**
+     * @property {BasicFacialExpressionRecognizer} basicFacialExpressionRecognizer Basic facial expression recognizer.
+     */
+    basicFacialExpressionRecognizer;
+    /**
+     * @property {ValenceFacialExpressionRecognizer} valenceFacialExpressionRecognizer Valence facial expression recognizer.
+     */
+    valenceFacialExpressionRecognizer;
+    /**
+     * @property {RemoteHREstimator} remoteHREstimator Remote HR estimator.
+     */
+    remoteHREstimator;
+    /**
+     * @property {EngagementRecognizer} engagementRecognizer Engagement recognizer.
+     */
+    engagementRecognizer;
+
+    /**
+     * @property {OpenCVLoader} opencvLoader OpenCV loader.
+     */
+    opencvLoader;
+    
+    /**
+     * @property {boolean} isRunning Running flag.
+     */
+    isRunning = false;
+    /**
+     * @property {ESRCType.ESRCMat} mat Mat instance.
+     */
+    mat = new ESRCType.ESRCMat();
+
+    /**
+     * ESRC constructor.
+     * @param {string} appId Application ID.
+     */
+    constructor(appId) {
+        this.appId = appId;
+
+        // Initialize core
+        this.measureEnvAnalyzer = new MeasureEnvAnalyzer(this.onAnalyzedMeasureEnv);
+        this.faceDetector = new FaceDetector(this.onDetectedFace);
+        this.facialLandmarkDetector = new FacialLandmarkDetector(this.onDetectedFacialLandmark);
+        this.facialActionUnitAnalyzer = new FacialActionUnitAnalyzer(this.onAnalyzedFacialActionUnit);
+        this.basicFacialExpressionRecognizer = new BasicFacialExpressionRecognizer(this.onRecognizedBasicFacialExpression);
+        this.valenceFacialExpressionRecognizer = new ValenceFacialExpressionRecognizer(this.onRecognizedValenceFacialExpression);
+        this.remoteHREstimator = new RemoteHREstimator();
+        this.engagementRecognizer = new EngagementRecognizer();
+    }
+
+    /**
+     * Returns current SDK version.
+     * @returns {string} SDK Version.
+     */
+    getSDKVersion() {
+        return "0.1.1";
+    }
+
+    /**
+     * Returns application ID.
+     * @returns {string} Application ID.
+     */
+    getApplicationId() {
+        return this.appId;
+    }
+
+    /**
+     * Sets application ID.
+     * @param {string} appId Application ID.
+     */
+    setAppId(appId) {
+        this.appId = appId;
+    }
+
+    /**
+     * Returns ESRC instance.
+     * @returns {ESRC} ESRC instance.
+     */
+    static getInstance() {
+        if (this.instance === undefined) {
+            throw new Error('ESRC instance hasn\'t been initialized.');
+        } else {
+            return this.instance;
+        }
+    }
+
+    /**
+     * Returns whether ESRC instance is initialized or not.
+     * @returns {string} Reutrns true if ESRC instance is initialized. Otherwise, false.
+     */
+    static isInitialized() {
+        return (this.instance !== undefined)
+    }
+
+    /**
+     * Load third-patry libraries.
+     * @param {callback} onloadCallback Callback handler.
+     */
+    static loadThirdPartyLibraries(onloadCallback) {
+        // Load OpenCV        
+        this.opencvLoader = new OpenCVLoader("node_modules/@esrc/opencv.js");
+        this.opencvLoader.loadOpenCV(() => {
+            // Callback
+            onloadCallback();
+        });
+    }
+
+    /**
+     * Initializes ESRC with given application ID.
+     * @param {string} appId Application ID.
+     * @param {callback} handler Callback handler.
+     * @returns {boolean} Returns true if the initialization succeeded. Otherwise, false.
+     */
+    static initWithApplicationId(appId, handler) {
+        let result = true;
+
+        if (this.instance === undefined) {
+            this.instance = new ESRC(appId);
+        } else {
+            if (this.getInstance().appId === appId) {
+                result = true;
+            }else {
+                result = false;
+            }
+        }
+        
+        // Initialize license
+        if (!ESRCLicense.init(appId, handler)) {
+            console.log('License key is invalid. Please contact us: esrc@esrc.co.kr');
+            result = false;
+        }
+
+        return result;
+    }
+
+    /**
+     * Starts ESRC process.
+     * @param {ESRCType.ESRCProperty} property ESRCProperty instance.
+     * @param {ESRCHandler} handler ESRCHandler instance.
+     * @returns {boolean} Returns true if the start succeeded. Otherwise, false.
+     */
+    static start(property, handler) {
+        let result = true;        
+
+        if (ESRCLicense.isValidated()) {
+            this.property = property;
+            this.getInstance().setESRCHandler(handler);
+            result = this.getInstance().initialize();
+            
+            // Start first process
+            this.getInstance().isRunning = true;
+            setTimeout(this.getInstance().process(this.getInstance()), 0);
+        } else {
+            result = false;
+            console.log('License key is invalid. Please contact us: esrc@esrc.co.kr');
+        }
+
+        return result;
+    }
+
+    /**
+     * Stops ESRC process.
+     * @returns {boolean} Returns true if the stop succeeded. Otherwise, false.
+     */
+    static stop() {
+        let result = true;
+
+        if (ESRCLicense.isValidated()) {
+            // Stop process
+            this.getInstance().isRunning = false;
+        } else {
+            result = false;
+            console.log('License key is invalid. Please contact us: esrc@esrc.co.kr');
+        }
+
+        return result;
+    }
+
+    /**
+     * Feed frame on ESRC process.
+     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     * @returns {boolean} Returns true if the feed succeeded. Otherwise, false.
+     */
+    static feed(mat) {
+        let result = true;
+
+        if (ESRCLicense.isValidated()) {
+            // Set mat
+            this.getInstance().mat.setMat(mat);
+        } else {
+            result = false;
+            console.log('License key is invalid. Please contact us: esrc@esrc.co.kr');
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns ESRCHandler handler.
+     * @returns {ESRCHandler} ESRCHandler handler.
+     */
+    getESRCHandler() {
+        return this.handler;
+    }
+
+    /**
+     * Sets ESRCHandler handler.
+     * @param {ESRCHandler} handler ESRCHandler handler.
+     */
+    setESRCHandler(handler) {
+        this.handler = handler;
+    }
+
+    /**
+     * Initializes ESRC process.
+     * @returns {boolean} Returns true if the initialization succeeded. Otherwise, false.
+     */
+    initialize() {
+        let ret = true;
+
+        // Initialize core
+        ret = this.measureEnvAnalyzer.initialize(ESRC.property !== undefined? ESRC.property.getEnableMeasureEnv() : false);
+        if (!ret) return ret;
+        ret = this.faceDetector.initialize(ESRC.property !== undefined? ESRC.property.getEnableFace() : false);
+        if (!ret) return ret;
+        ret = this.facialLandmarkDetector.initialize(ESRC.property !== undefined? ESRC.property.getEnableFacialLandmark() : false);
+        if (!ret) return ret;
+        ret = this.facialActionUnitAnalyzer.initialize(ESRC.property !== undefined? ESRC.property.getEnableFacialActionUnit() : false);
+        if (!ret) return ret;
+        ret = this.basicFacialExpressionRecognizer.initialize(ESRC.property !== undefined? ESRC.property.getEnableBasicFacialExpression() : false);
+        if (!ret) return ret;
+        ret = this.valenceFacialExpressionRecognizer.initialize(ESRC.property !== undefined? ESRC.property.getEnableValenceFacialExpression() : false);
+        if (!ret) return ret;
+        ret = this.remoteHREstimator.initialize(ESRC.property !== undefined? ESRC.property.getEnableRemoteHR() : false,
+            ESRC.property !== undefined? ESRC.property.getEnableHRV() : false,
+            this.didChangedProgressRatioOnRemoteHR, this.onEstimatedRemoteHR, 
+            this.didChangedProgressRatioOnHRV, this.onAnalyzedHRV);
+        if (!ret) return ret;
+        ret = this.engagementRecognizer.initialize(ESRC.property !== undefined? ESRC.property.getEnableEngagement() : false,
+            this.onRecognizedEngagement);
+        if (!ret) return ret;
+        
+        return ret;
+    }
+
+    /**
+     * Releases ESRC process.
+     * @returns {boolean} Returns true if the release succeeded. Otherwise, false.
+     */
+    release() {
+        let ret = true;
+
+        // Release core
+        ret = this.measureEnvAnalyzer.release();
+        if (!ret) return ret;
+        ret = this.faceDetector.release();
+        if (!ret) return ret;
+        ret = this.facialLandmarkDetector.release();
+        if (!ret) return ret;
+        ret = this.facialActionUnitAnalyzer.release();
+        if (!ret) return ret;
+        ret = this.basicFacialExpressionRecognizer.release();
+        if (!ret) return ret;
+        ret = this.valenceFacialExpressionRecognizer.release();
+        if (!ret) return ret;
+        ret = this.remoteHREstimator.release();
+        if (!ret) return ret;
+        ret = this.engagementRecognizer.release();
+        if (!ret) return ret;
+
+        // Release variables
+        this.mat.release();
+        
+        return ret;
+    }
+
+    /**
+     * ESRC process.
+     * @param {ESRC} obj ESRC Instance.
+     */
+    process(obj) {
+        // Stop process
+        if (!obj.isRunning) { 
+            obj.release();
+            return; 
+        }
+        let begin = Date.now();
+        
+        // Detect face
+        if (obj.mat.getFrame() !== undefined) {
+            obj.detectFace(obj.mat);
+        }        
+
+        // Start next process (10 fps)
+        let delay = 1000 / 10 - (Date.now() - begin);
+        setTimeout(() => obj.process(obj), delay);
+    }
+
+    /**
+     * Detects face from frame image.
+     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     */
+    detectFace(mat) {
+        this.measureEnvAnalyzer.feed(mat);
+        this.faceDetector.feed(mat);
+    }
+
+    /**
+     * Detects facial landmark from face image.
+     * @param {ESRCType.ESRCFace} bbox ESRCFace instance.
+     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     */
+    detectFacialLandmark(bbox, mat) {        
+        this.facialLandmarkDetector.feed(bbox, mat);
+    }
+
+    /**
+     * Analyzes facial action unit from facial landmark.
+     * @param {ESRCType.ESRCFacialLandmark} facialLandmark ESRCFacialLandmark instance.
+     */
+    analyzeFacialActionUnit(facialLandmark) {
+        this.facialActionUnitAnalyzer.feed(facialLandmark);
+    }
+
+    /**
+     * Recognizes basic facial expression from face image.
+     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     */
+    recognizeBasicFacialExpression(mat) {
+        this.basicFacialExpressionRecognizer.feed(mat);
+    }
+
+    /**
+     * Recognizes valence facial expression from face image.
+     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     */
+    recognizeValenceFacialExpression(mat) {
+        this.valenceFacialExpressionRecognizer.feed(mat);
+    }
+
+    /**
+     * Estimates heart rate from face image.
+     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     */
+    estimateRemoteHR(mat) {
+        this.remoteHREstimator.feed(mat);
+    }
+
+    /**
+     * Recognizes engagement from heart rate in time domain.
+     * @param {ESRCType.ESRCRemoteHR|ESRCHRV} arg ESRCRemoteHR or ESRCHRV instance.
+     */
+    recognizeEngagement(arg) {
+        this.engagementRecognizer.feed(arg)
+    }
+
+    /**
+     * A callback for when measurement environment is analyzed.
+     * @param {ESRCType.ESRCMeasureEnv} measureEnv ESRCMeasureEnv instance.
+     */
+    onAnalyzedMeasureEnv(measureEnv) {
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onAnalyzeMeasureEnv(measureEnv);
+        }
+    }
+
+    /**
+     * A callback for when face is detected.
+     * @param {ESRCType.ESRCFace} bbox Bounding box of detected face.
+     * @param {ESRCType.ESRCMat} bboxMat Mat instance for bounding box of detected face.
+     * @param {ESRCType.ESRCFace} sbox Square box of detected face.
+     * @param {ESRCType.ESRCMat} sboxMat Mat instance for square box of detected face.
+     */
+    onDetectedFace(bbox, bboxMat, sbox, sboxMat) {
+        // If face is detected
+        if (bbox.getIsDetect()) {
+            // Detect facial landmark
+            ESRC.getInstance().detectFacialLandmark(sbox, sboxMat);
+
+            // Recognize basic facial expression
+            ESRC.getInstance().recognizeBasicFacialExpression(bboxMat);
+
+            // Recognize valence facial expression
+            ESRC.getInstance().recognizeValenceFacialExpression(bboxMat);
+
+            // Estimate remote hr
+            ESRC.getInstance().estimateRemoteHR(bboxMat);
+        }
+
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onDetectedFace(bbox);
+        }
+    }
+    
+    /**
+     * A callback for when facial landmark is detected.
+     * @param {ESRCType.ESRCFacialLandmark} facialLandmark ESRCFacialLandmark instance.
+     */
+    onDetectedFacialLandmark(facialLandmark) {
+        // Analyze facial action unit
+        ESRC.getInstance().analyzeFacialActionUnit(facialLandmark);
+
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onDetectedFacialLandmark(facialLandmark);
+        }
+    }
+
+    /**
+     * A callback for when facial action unit is analyzed.
+     * @param {ESRCType.ESRCFacialActionUnit} facialActionUnit ESRCFacialActionUnit instance.
+     */
+    onAnalyzedFacialActionUnit(facialActionUnit) {
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onAnalyzedFacialActionUnit(facialActionUnit);
+        }
+    }
+
+    /**
+     * A callback for when basic facial expression is recognized.
+     * @param {ESRCType.ESRCBasicFacialExpression} facialExpression ESRCBasicFacialExpression instance.
+     */
+    onRecognizedBasicFacialExpression(facialExpression) {
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onRecognizedBasicFacialExpression(facialExpression);
+        }
+    }
+
+    /**
+     * A callback for when valence facial expression is recognized.
+     * @param {ESRCType.ESRCValenceFacialExpression} facialExpression ESRCValenceFacialExpression instance.
+     */
+    onRecognizedValenceFacialExpression(facialExpression) {
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onRecognizedValenceFacialExpression(facialExpression);
+        }
+    }
+
+    /**
+     * A callback for when progress ratio on remote hr is changed.
+     * @param {ESRCType.ESRCProgressRatio} progressRatio ESRCProgressRatio instance.
+     */    
+    didChangedProgressRatioOnRemoteHR(progressRatio) {
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.didChangedProgressRatioOnRemoteHR(progressRatio);
+        }
+    }
+
+    /**
+     * A callback for when remote hr is estimated.
+     * @param {ESRCType.ESRCRemoteHR} remoteHR ESRCRemoteHR instance.
+     */
+    onEstimatedRemoteHR(remoteHR) {
+        // Recognize engagement in time domain
+        if (!ESRC.property.getEnableHRV()) {
+            ESRC.getInstance().recognizeEngagement(remoteHR);
+        }
+
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onEstimatedRemoteHR(remoteHR);
+        }
+    }
+
+    /**
+     * A callback for when progress ratio on HRV is changed.
+     * @param {ESRCType.ESRCProgressRatio} progressRatio ESRCProgressRatio instance.
+     */
+    didChangedProgressRatioOnHRV(progressRatio) {
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.didChangedProgressRatioOnHRV(progressRatio);
+        }
+    }
+
+    /**
+     * A callback for when HRV is analyzed.
+     * @param {ESRCType.ESRCHRV} hrv ESRCHRV instance.
+     */
+    onAnalyzedHRV(hrv) {
+        // Recognize engagement in frequency domain
+        if (ESRC.property.getEnableHRV()) {
+            ESRC.getInstance().recognizeEngagement(hrv);
+        }
+
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onAnalyzedHRV(hrv);
+        }
+    }
+
+    /**
+     * A callback for when engagement is recognized.
+     * @param {ESRCType.ESRCEngagement} engagement 
+     */
+    onRecognizedEngagement(engagement) {
+        // Callback
+        if (ESRC.getInstance().handler !== undefined) {
+            ESRC.getInstance().handler?.onRecognizedEngagement(engagement);
+        }
+    }
+}
+
+module.exports = ESRC;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ESRCType.html">ESRCType</a></li></ul><h3>Classes</h3><ul><li><a href="APIClient.html">APIClient</a></li><li><a href="BasicFacialExpressionRecognizer.html">BasicFacialExpressionRecognizer</a></li><li><a href="EngagementRecognizer.html">EngagementRecognizer</a></li><li><a href="ESRC.html">ESRC</a></li><li><a href="ESRCHandler.html">ESRCHandler</a></li><li><a href="ESRCLicense.html">ESRCLicense</a></li><li><a href="FaceDetector.html">FaceDetector</a></li><li><a href="FacialActionUnitAnalyzer.html">FacialActionUnitAnalyzer</a></li><li><a href="FacialLandmarkDetector.html">FacialLandmarkDetector</a></li><li><a href="FileManager.html">FileManager</a></li><li><a href="MeasureEnvAnalyzer.html">MeasureEnvAnalyzer</a></li><li><a href="module-ESRCType-ESRCAttention.html">ESRCAttention</a></li><li><a href="module-ESRCType-ESRCBasicFacialExpression.html">ESRCBasicFacialExpression</a></li><li><a href="module-ESRCType-ESRCEngagement.html">ESRCEngagement</a></li><li><a href="module-ESRCType-ESRCFace.html">ESRCFace</a></li><li><a href="module-ESRCType-ESRCFacialActionUnit.html">ESRCFacialActionUnit</a></li><li><a href="module-ESRCType-ESRCFacialLandmark.html">ESRCFacialLandmark</a></li><li><a href="module-ESRCType-ESRCHeadPose.html">ESRCHeadPose</a></li><li><a href="module-ESRCType-ESRCHRV.html">ESRCHRV</a></li><li><a href="module-ESRCType-ESRCMat.html">ESRCMat</a></li><li><a href="module-ESRCType-ESRCMeasureEnv.html">ESRCMeasureEnv</a></li><li><a href="module-ESRCType-ESRCPoint2f.html">ESRCPoint2f</a></li><li><a href="module-ESRCType-ESRCProgressRatio.html">ESRCProgressRatio</a></li><li><a href="module-ESRCType-ESRCProperty.html">ESRCProperty</a></li><li><a href="module-ESRCType-ESRCRemoteHR.html">ESRCRemoteHR</a></li><li><a href="module-ESRCType-ESRCValenceFacialExpression.html">ESRCValenceFacialExpression</a></li><li><a href="OpenCVLoader.html">OpenCVLoader</a></li><li><a href="RemoteHREstimator.html">RemoteHREstimator</a></li><li><a href="ValenceFacialExpressionRecognizer.html">ValenceFacialExpressionRecognizer</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Jun 27 2022 16:21:06 GMT+0900 (대한민국 표준시)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

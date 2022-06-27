@@ -1,0 +1,2970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ESRCType.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ESRCType.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Represent types of ESRC.
+ * @module ESRCType
+ * @author Hyunwoo Lee &lt;lhw4846@esrc.co.kr>
+ * @license Copyright (c) 2022 Emotion Science Research Center all rights reserved.
+ */
+
+/**
+ * Represents a floating point in 2d-space.
+ */
+class ESRCPoint2f {
+    /**
+     * @property {number} x X position.
+     */
+    x;
+    /**
+     * @property {number} y Y position.
+     */
+    y;
+
+    /**
+     * ESRCPoint2f constructor.
+     * @param {number} x X position.
+     * @param {number} y Y position.
+     */
+    constructor(x, y) {
+        this.x = x ?? 0;
+        this.y = y ?? 0;
+    }
+
+    /**
+     * Returns X position.
+     * @returns {number} X position.
+     */
+    getX() {
+        return this.x;
+    }
+
+    /**
+     * Returns Y position.
+     * @returns {number} Y position.
+     */
+    getY() {
+        return this.y;
+    }
+
+    /**
+     * Sets X position.
+     * @param {number} x X position.
+     */
+    setX(x) {
+        this.x = x;
+    }
+
+    /**
+     * Sets Y position.
+     * @param {number} y Y position.
+     */
+    setY(y) {
+        this.y = y;
+    }
+
+    /**
+     * Sets ESRCPoint2f.
+     * @param {ESRCPoint2f} other ESRCPoint2f instance.
+     */
+    setPoint(other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            x: this.x,
+            y: this.y
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents image structure.
+ */
+class ESRCMat {
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {cv.Mat} frame Frame data.
+     */
+    frame;
+
+    /**
+     * ESRCMat constructor.
+     * @param {number} id Identification.
+     * @param {cv.Mat} frame Frame data.
+     */
+    constructor(frame, id) {
+        this.id = id ?? -1;
+        this.frame = frame ?? undefined;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns frame data.
+     * @returns {cv.Mat|undefined} Frame data.
+     */
+    getFrame() {
+        return this.frame;
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Sets frame data.
+     * @param {cv.Mat} frame Frame data.
+     */
+    setFrame(frame) {
+        this.frame = frame;
+    }
+
+    /**
+     * Sets ESRCMat.
+     * @param {ESRCMat} other ESRCMat instance.
+     */
+    setMat(other) {
+        this.id = other.id;
+        this.frame = other.frame;
+    }
+
+    /**
+     * Releases frame data.
+     */
+    release() {
+        this.id = -1;
+        this.frame = undefined;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            frame: this.frame
+        });
+
+        return str;
+    }
+}
+
+/**
+ * Represents measurement environment structure.
+ */
+class ESRCMeasureEnv {
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for unmeasured brightness.
+     * @static
+     */
+    static MEASURE_ENV_BRIGHTNESS_NONE = -1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for high brightness.
+     * @static
+     */
+    static MEASURE_ENV_BRIGHTNESS_HIGH = 0;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for normal brightness.
+     * @static
+     */
+    static MEASURE_ENV_BRIGHTNESS_NORMAL = 1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for low brightness.
+     * @static
+     */
+    static MEASURE_ENV_BRIGHTNESS_LOW = 2;
+
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {number} brightness Brightenss.
+     */
+    brightness;
+
+    /**
+     * ESRCMeasure constructor.
+     * @param {number} id Identification.
+     * @param {number} brightness Brightness.
+     */
+    constructor(id, brightness) {
+        this.id = id ?? -1;
+        this.brightness = brightness ?? ESRCMeasureEnv.MEASURE_ENV_BRIGHTNESS_NONE;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns brightness.
+     * @returns {number} Brightness.
+     */
+    getBrightness() {
+        return this.brightness;
+    }
+    
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Sets brightness.
+     * @param {number} brightness Brightness.
+     */
+    setBrightness(brightness) {
+        this.brightness = brightness;
+    }
+
+    /**
+     * Sets ESRCMeasureEnv.
+     * @param {ESRCMeasureEnv} other ESRCMeasureEnv instance.
+     */
+    setMeasureEnv(other) {
+        this.id = other.id;
+        this.brightness = other.brightness;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            brightness: this.brightness
+        });
+
+        return str;
+    }
+}
+
+/**
+ * Represents face structure.
+ */
+class ESRCFace {
+    /**
+     * @property {number} id Identnfication.
+     */
+    id;
+    /**
+     * @property {boolean} isDetect Whether face is detected or not.
+     */
+    isDetect;
+    /**
+     * @property {number} x Left-top X position of face.
+     */
+    x;
+    /**
+     * @property {number} y Left-top Y position of face.
+     */
+    y;
+    /**
+     * @property {number} w Width of face
+     */
+    w;
+    /**
+     * @property {number} h Height of face.
+     */
+    h;
+    /**
+     * @property {number} conf Confidence level.
+     */
+    conf;
+
+    /**
+     * ESRCFace constructor.
+     * @param {number} id Identification.
+     * @param {boolean} isDetect Whether face is detected or not.
+     * @param {number} x Left-top X position of face.
+     * @param {number} y Left-top Y position of face.
+     * @param {number} w Width of face.
+     * @param {number} h Height of face.
+     * @param {number} conf Confidence level.
+     */
+    constructor(id, isDetect, x, y, w, h, conf) {
+        this.id = id ?? -1;
+        this.isDetect = isDetect ?? false;
+        this.x = x ?? 0;
+        this.y = y ?? 0;
+        this.w = w ?? 0;
+        this.h = h ?? 0;
+        this.conf = conf ?? 0;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns whether face is detected or not.
+     * @returns {boolean} Whether face is detected or not.
+     */
+    getIsDetect() {
+        return this.isDetect;
+    }
+
+    /**
+     * Returns left-top X position of face.
+     * @returns {number} Left-top X position of face.
+     */
+    getX() {
+        return this.x;
+    }
+
+    /**
+     * Returns left-top Y position of face.
+     * @returns {number} Left-top Y position of face.
+     */
+    getY() {
+        return this.y;
+    }
+
+    /**
+     * Returns width of face.
+     * @returns {number} Width of face.
+     */
+    getW() {
+        return this.w;
+    }
+
+    /**
+     * Returns height of face.
+     * @returns {number} Height of face.
+     */
+    getH() {
+        return this.h;
+    }
+
+    /**
+     * Returns confidence level.
+     * @returns {number} Confidence level.
+     */
+    getConf() {
+        return this.conf;
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Sets whether face is detected or not.
+     * @param {boolean} isDetect Whether face is detected or not.
+     */
+    setIsDetect(isDetect) {
+        this.isDetect = isDetect;
+    }
+    
+    /**
+     * Sets left-top X position of face.
+     * @param {number} x Left-top X position of face.
+     */
+    setX(x) {
+        this.x = x;
+    }
+
+    /**
+     * Sets left-top Y position of face.
+     * @param {number} y Left-top Y position of face.
+     */
+    setY(y) {
+        this.y = y;
+    }
+
+    /**
+     * Sets width of face.
+     * @param {number} w Width of face.
+     */
+    setW(w) {
+        this.w = w;
+    }
+
+    /**
+     * Sets height of face.
+     * @param {number} h Height of face.
+     */
+    setH(h) {
+        this.h = h;
+    }
+
+    /**
+     * Sets confidence level.
+     * @param {number} conf Confidence level.
+     */
+    setConf(conf) {
+        this.conf = conf;
+    }
+
+    /**
+     * Sets ESRCFace.
+     * @param {ESRCFace} other ESRCFace instance.
+     */
+    setFace(other) {
+        this.id = other.id;
+        this.isDetect = other.isDetect;
+        this.x = other.x;
+        this.y = other.y;
+        this.w = other.w;
+        this.h = other.h;
+        this.conf = other.conf;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            isDetect: this.isDetect,
+            x: this.x,
+            y: this.y,
+            w: this.w,
+            h: this.h,
+            conf: this.conf
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents facial landmark structure in 2d-space.
+ */
+class ESRCFacialLandmark {
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for count of facial landmarks.
+     * @static
+     */
+    static FACIAL_LANDMARK_COUNT = 68;
+
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {Array.&lt;number>} x X positions.
+     */
+    x;
+    /**
+     * @property {Array.&lt;number>} y Y positions.
+     */
+    y;
+    
+    /**
+     * ESRCFacialLandmark constructor.
+     * @param {number} id Identification.
+     * @param {Array.&lt;number>} x X positions.
+     * @param {Array.&lt;number>} y Y positions.
+     */
+    constructor(id, x, y) {
+        this.id = id ?? -1;
+        this.x = x ?? new Array(ESRCFacialLandmark.FACIAL_LANDMARK_COUNT);
+        this.y = y ?? new Array(ESRCFacialLandmark.FACIAL_LANDMARK_COUNT);
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Return X positions of facial landmarks.
+     * @returns {Array.&lt;number>} X positions of facial landmarks.
+     */
+    getXPositions() {
+        return this.x;
+    }
+
+    /**
+     * Returns X position of facial landmark[index].
+     * @param {number} index Index of facial landmark.
+     * @returns {number} X position of facial landmark[index].
+     */
+    getXPosition(index) {
+        return this.x[index];
+    }
+
+    /**
+     * Return Y positions of facial landmarks.
+     * @returns {Array.&lt;number>} Y positions of facial landmarks.
+     */
+    getYPositions() {
+        return this.y;
+    }
+
+    /**
+     * Returns Y position of facial landmark[index].
+     * @param {number} index Index of facial landmark.
+     * @returns {number} Y position of facial landmark[index].
+     */
+    getYPosition(index) {
+        return this.y[index];
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Set X positions of facial landmarks.
+     * @param {Array.&lt;number>} x X positions of facial landmarks.
+     */
+    setXPositions(x) {
+        this.x = x;
+    }
+
+    /**
+     * Sets X position of facial landmark[index].
+     * @param {number} index Index of facial landmark.
+     * @param {number} x X position of facial landmark[index].
+     */
+    setXPosition(index, x) {
+        this.x[index] = x;
+    }
+
+    /**
+     * Set Y positions of facial landmarks.
+     * @param {Array.&lt;number>} y Y positions of facial landmarks.
+     */
+    setYPositions(y) {
+        this.y = y;
+    }
+
+    /**
+     * Sets Y position of facial landmark[index].
+     * @param {number} index Index of facial landmark.
+     * @param {number} y Y position of facial landmark[index].
+     */
+    setYPosition(index, y) {
+        this.y[index] = y;
+    }
+
+    /**
+     * Set positions of facial landmarks.
+     * @param {Array.&lt;number>} positions Positions of facial landmarks.
+     */
+    setPositions(positions) {
+        for (let i = 0; i &lt; ESRCFacialLandmark.FACIAL_LANDMARK_COUNT * 2; i++) {
+            if (i % 2 === 0) {
+                this.x[Math.floor(i / 2)] = positions[i];
+            } else {
+                this.y[Math.floor(i / 2)] = positions[i];
+            }
+        }
+    }
+
+    /**
+     * Sets ESRCFacialLandmark.
+     * @param {ESRCFacialLandmark} other ESRCFacialLandmark instance.
+     */
+    setFacialLandmark(other) {
+        this.id = other.id;
+        this.x = other.x;
+        this.y = other.y;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            x: this.x,
+            y: this.y
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents facial action unit structure.
+ */
+class ESRCFacialActionUnit {
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for count of facial action unit.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_COUNT = 39;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 1 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_1_LEFT = 0;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 1 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_1_RIGHT = 1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 2 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_2_LEFT = 2;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 2 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_2_RIGHT = 3;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 4 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_4_MID = 4;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 5 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_5_LEFT = 5;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 5 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_5_RIGHT = 6;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 6 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_6_LEFT = 7;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 6 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_6_RIGHT = 8;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 7 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_7_LEFT = 9;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 7 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_7_RIGHT = 10;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 9 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_9_LEFT = 11;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 9 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_9_RIGHT = 12;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 10 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_10_MID = 13;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 11 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_11_MID = 14;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 12 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_12_LEFT = 15;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 12 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_12_RIGHT = 16;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 14 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_14_LEFT = 17;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 14 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_14_RIGHT = 18;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 15 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_15_LEFT = 19;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 15 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_15_RIGHT = 20;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 16 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_16_MID = 21;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 18 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_18_MID = 22;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 20 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_20_LEFT = 23;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 20 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_20_RIGHT = 24;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 21 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_21_MID = 25;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 22 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_22_MID = 26;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 25 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_25_MID = 27;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 26 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_26_MID = 28;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 27 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_27_MID = 29;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 28 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_28_MID = 30;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 29 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_29_MID = 31;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 30 mid.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_30_MID = 32;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 35 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_35_LEFT = 33;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 35 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_35_RIGHT = 34;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 38 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_38_LEFT = 35;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 38 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_38_RIGHT = 36;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 43 left.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_43_LEFT = 37;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of facial action unit 43 right.
+     * @static
+     */
+    static FACIAL_ACTION_UNIT_43_RIGHT = 38;
+
+    /**
+     * @property {number} Identification.
+     */
+    id;
+    /**
+     * @property {Array.&lt;ESRCPoint2f>} Centroid list.
+     */
+    centroid;
+    /**
+     * @property {Array.&lt;number>} Area list.
+     */
+    area;
+
+    /**
+     * ESRCFacialActionUnit constructor.
+     * @param {number} id Identification.
+     * @param {Array.&lt;ESRCPoint2f>} centroid Centroid list.
+     * @param {Array.&lt;number>} area Area list.
+     */
+    constructor(id, centroid, area) {
+        this.id = id ?? -1;
+        this.centroid = centroid ?? new Array(ESRCFacialActionUnit.FACIAL_ACTION_UNIT_COUNT);
+        this.area = area ?? new Array(ESRCFacialActionUnit.FACIAL_ACTION_UNIT_COUNT);
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Return centroids of facial action units.
+     * @returns {Array.&lt;ESRCPoint2f>}Centroids of facial action units.
+     */
+    getCentroids() {
+        return this.centroid;
+    }
+
+    /**
+     * Returns centroid of facial action unit[index].
+     * @param {number} index Index of facial action unit.
+     * @returns {ESRCPoint2f} Centroid of facial action unit[index].
+     */
+    getCentroid(index) {
+        return this.centroid[index];
+    }
+
+    /**
+     * Return areas of facial action units.
+     * @returns {Array.&lt;number>} Areas of facial action units.
+     */
+    getAreas() {
+        return this.area;
+    }
+
+    /**
+     * Returns area of facial action unit[index].
+     * @param {number} index Index of facial action unit.
+     * @returns {number} Area of facial action unit[index].
+     */
+    getArea(index) {
+        return this.area[index];
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Set centroids of facial action units.
+     * @param {Array.&lt;ESRCPoint2f>}centroid Centroids of facial action units.
+     */
+    setCentroids(centroid) {
+        this.centroid = centroid;
+    }
+
+    /**
+     * Sets centroid of facial action unit[index].
+     * @param {number} index Index of facial acion unit.
+     * @param {ESRCPoint2f} centroid Centroid of facial action unit[index].
+     */
+    setCentroid(index, centroid) {
+        this.centroid[index] = centroid;
+    }
+
+    /**
+     * Set areas of facial action units.
+     * @param {Array.&lt;number>} area Areas of facial action units.
+     */
+    setAreas(area) {
+        this.area = area;
+    }
+
+    /**
+     * Sets area of facial action unit[index].
+     * @param {number} index Index of facial acion unit.
+     * @param {number} area Area of facial action unit[index].
+     */
+    setArea(index, area) {
+        this.area[index] = area;
+    }
+
+    /**
+     * Sets FacialActionUnit instance.
+     * @param {ESRCFacialActionUnit } other ESRCFacialActionUnit instance.
+     */
+    setFacialActionUnit(other) {
+        this.id = other.id;
+        this.centroid = other.centroid;
+        this.area = other.area;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            centroid: this.centroid,
+            area: this.area
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents basic facial expression structure.
+ */
+class ESRCBasicFacialExpression {
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for count of basic facial expressions.
+     * @static
+     */
+    static FACIAL_EXPRESSION_COUNT = 7;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for unrecognized facial expression.
+     * @static
+     */
+    static FACIAL_EXPRESSION_NONE = -1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of anger.
+     * @static
+     */
+    static FACIAL_EXPRESSION_ANGER = 0;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of disgust.
+     * @static
+     */
+    static FACIAL_EXPRESSION_DISGUST = 1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of fear.
+     * @static
+     */
+    static FACIAL_EXPRESSION_FEAR = 2;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of happiness.
+     * @static
+     */
+    static FACIAL_EXPRESSION_HAPPY = 3;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of sadness.
+     * @static
+     */
+    static FACIAL_EXPRESSION_SAD = 4;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of surprise.
+     * @static
+     */
+    static FACIAL_EXPRESSION_SURPRISE = 5;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of neutral.
+     * @static
+     */
+    static FACIAL_EXPRESSION_NEUTRAL = 6;
+
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {Array.&lt;number>} emotionProbs Probabilities of basic facial epxression.
+     */
+    emotionProbs;
+    /**
+     * @property {number} emotion Basic facial expression.
+     */
+    emotion;
+
+    /**
+     * ESRCBasicFacialExpression constructor.
+     * @param {number} id Identification.
+     * @param {Array.&lt;number>} emotionProbs Probabilities of basic facial epxression.
+     * @param {number} emotion Basic facial epxression.
+     */
+    constructor(id, emotionProbs, emotion) {
+        this.id = id ?? -1;
+        this.emotionProbs = emotionProbs ?? new Array(ESRCBasicFacialExpression.FACIAL_EXPRESSION_COUNT);
+        this.emotion = emotion ?? ESRCBasicFacialExpression.FACIAL_EXPRESSION_COUNT;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Return probabilities of basic facial expressions.
+     * @returns {Array.&lt;number>} Probabilities of basic facial expressions.
+     */
+    getEmotionProbs() {
+        return this.emotionProbs;
+    }
+
+    /**
+     * Returns probability of basic facial expression[index].
+     * @param {number} index Index of basic facial expression.
+     * @returns {number} Probability of basic facial expression[index].
+     */
+    getEmotionProb(index) {
+        return this.emotionProbs[index];
+    }
+
+    /**
+     * Returns basic facial expression.
+     * @returns {number} Basic facial expression.
+     */
+    getEmotion() {
+        return this.emotion;
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Set probabilities of basic facial expressions.
+     * @param {Array.&lt;number>} emotionProbs Probabilities of basic facial expressions.
+     */
+    setEmotionProbs(emotionProbs) {
+        this.emotionProbs = emotionProbs;
+    }
+
+    /**
+     * Sets probability of basic facial expression[index].
+     * @param {number} index Index of basic facial expression.
+     * @param {number} emotionProb Probability of basic facial expression[index].
+     */
+    setEmotionProb(index, emotionProb) {
+        this.emotionProbs[index] = emotionProb;
+    }
+
+    /**
+     * Sets basic facial epxression.
+     * @param {number} emotion Basic facial expression.
+     */
+    setEmotion(emotion) {
+        this.emotion = emotion;
+    }
+
+    /**
+     * Sets ESRCBasicFacialExpression.
+     * @param {ESRCBasicFacialExpression} other ESRCBasicFacialExpression instance.
+     */
+    setBasicFacialExpression(other) {
+        this.id = other.id;
+        this.emotionProbs = other.emotionProbs;
+        this.emotion = other.emotion;
+    }
+
+    /**
+     * Returns string of emotion.
+     * @returns {string} String of emotion.
+     */
+    getEmotionStr() {
+        let emotionStr = "NONE";
+
+        switch (this.emotion) {
+            case ESRCBasicFacialExpression.FACIAL_EXPRESSION_ANGER:
+                emotionStr = "ANGER";
+                break;
+            case ESRCBasicFacialExpression.FACIAL_EXPRESSION_FEAR:
+                emotionStr = "FEAR";
+                break;
+            case ESRCBasicFacialExpression.FACIAL_EXPRESSION_DISGUST:
+                emotionStr = "DISGUST";
+                break;
+            case ESRCBasicFacialExpression.FACIAL_EXPRESSION_NEUTRAL:
+                emotionStr = "NEUTRAL";
+                break;
+            case ESRCBasicFacialExpression.FACIAL_EXPRESSION_HAPPY:
+                emotionStr = "HAPPY";
+                break;
+            case ESRCBasicFacialExpression.FACIAL_EXPRESSION_SAD:
+                emotionStr = "SAD";
+                break;
+            case ESRCBasicFacialExpression.FACIAL_EXPRESSION_SURPRISE:
+                emotionStr = "SURPRISE";
+                break;
+            default:
+                emotionStr = "NONE";
+        }
+
+        return emotionStr;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            emotionProbs: this.emotionProbs,
+            emotion: this.emotion
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents valence facial expression structure.
+ */
+class ESRCValenceFacialExpression {
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for count of valence facial expressions.
+     * @static
+     */
+    static FACIAL_EXPRESSION_COUNT = 3;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for unrecognized facial expression.
+     * @static
+     */
+    static FACIAL_EXPRESSION_NONE = -1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of positive.
+     * @static
+     */
+    static FACIAL_EXPRESSION_POSITIVE = 0;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of negative.
+     * @static
+     */
+    static FACIAL_EXPRESSION_NEGATIVE = 1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of neutral.
+     * @static
+     */
+    static FACIAL_EXPRESSION_NEUTRAL = 2;
+    
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {Array.&lt;number>} emotionProbs Probabilities of valence facial epxression.
+     */
+    emotionProbs;
+    /**
+     * @property {number} emotion Valence facial expression.
+     */
+    emotion;
+
+    /**
+     * ESRCValenceFacialExpression constructor.
+     * @param {number} id Identification.
+     * @param {Array.&lt;number>} emotionProbs Probabilities of valence facial epxression.
+     * @param {number} emotion Valence facial epxression.
+     */
+    constructor(id, emotionProbs, emotion) {
+        this.id = id ?? -1;
+        this.emotionProbs = emotionProbs ?? new Array(ESRCValenceFacialExpression.FACIAL_EXPRESSION_COUNT);
+        this.emotion = emotion ?? ESRCValenceFacialExpression.FACIAL_EXPRESSION_COUNT;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Return probabilities of valence facial expressions.
+     * @returns {Array.&lt;number>} Probabilities of valence facial expressions.
+     */
+    getEmotionProbs() {
+        return this.emotionProbs;
+    }
+
+    /**
+     * Returns probability of valence facial expression[index].
+     * @param {number} index Index of valence facial expression.
+     * @returns {number} Probability of valence facial expression[index].
+     */
+    getEmotionProb(index) {
+        return this.emotionProbs[index];
+    }
+
+    /**
+     * Returns valence facial expression.
+     * @returns {number} Valence facial expression.
+     */
+    getEmotion() {
+        return this.emotion;
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Set probabilities of valence facial expressions.
+     * @param {Array.&lt;number>} emotionProbs Probabilities of valence facial expressions.
+     */
+    setEmotionProbs(emotionProbs) {
+        this.emotionProbs = emotionProbs;
+    }
+
+    /**
+     * Sets probability of valence facial expression[index].
+     * @param {number} index Index of valence facial expression.
+     * @param {number} emotionProb Probability of valence facial expression[index].
+     */
+    setEmotionProb(index, emotionProb) {
+        this.emotionProbs[index] = emotionProb;
+    }
+
+    /**
+     * Sets valence facial epxression.
+     * @param {number} emotion Valence facial expression.
+     */
+    setEmotion(emotion) {
+        this.emotion = emotion;
+    }
+
+    /**
+     * Sets ESRCValenceFacialExpression.
+     * @param {ESRCValenceFacialExpression} other ESRCValenceFacialExpression instance.
+     */
+    setValenceFacialExpression(other) {
+        this.id = other.id;
+        this.emotionProbs = other.emotionProbs;
+        this.emotion = other.emotion;
+    }
+
+    /**
+     * Returns string of emotion.
+     * @returns {string} String of emotion.
+     */
+    getEmotionStr() {
+        let emotionStr = "NONE";
+
+        switch (this.emotion) {
+            case ESRCValenceFacialExpression.FACIAL_EXPRESSION_POSITIVE:
+                emotionStr = "POSITIVE";
+                break;
+            case ESRCValenceFacialExpression.FACIAL_EXPRESSION_NEGATIVE:
+                emotionStr = "NEGATIVE";
+                break;
+            case ESRCValenceFacialExpression.FACIAL_EXPRESSION_NEUTRAL:
+                emotionStr = "NEUTRAL";
+                break;
+            default:
+                emotionStr = "NONE";
+        }
+
+        return emotionStr;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            emotionProbs: this.emotionProbs,
+            emotion: this.emotion
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents head pose structure in 3d-space.
+ */
+class ESRCHeadPose {
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {number} thetaX Angle of X axis.
+     */
+    thetaX;
+    /**
+     * @property {number} thetaY Angle of Y axis.
+     */
+    thetaY;
+    /**
+     * @property {number} thetaZ Angle of Z axis.
+     */
+    thetaZ;
+
+    /**
+     * ESRCHeadPose constructor.
+     * @param {number} id Identification.
+     * @param {number} thetaX Angle of X axis.
+     * @param {number} thetaY Angle of Y axis.
+     * @param {number} thetaZ Angle of Z axis.
+     */
+    constructor(id, thetaX, thetaY, thetaZ) {
+        this.id = id ?? -1;
+        this.thetaX = thetaX ?? 0;
+        this.thetaY = thetaY ?? 0;
+        this.thetaZ = thetaZ ?? 0;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns angle of X axis.
+     * @returns {number} Angle of X axis.
+     */
+    getThetaX() {
+        return this.thetaX;
+    }
+
+    /**
+     * Returns angle of Y axis.
+     * @returns {number} Angle of Y axis.
+     */
+    getThetaY() {
+        return this.thetaY;
+    }
+
+    /**
+     * Returns angle of Z axis.
+     * @returns {number} Angle of Z axis.
+     */
+    getThetaZ() {
+        return this.thetaZ;
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Sets angle of X axis.
+     * @param {number} thetaX Angle of X axis.
+     */
+    setThetaX(thetaX) {
+        this.thetaX = thetaX;
+    }
+
+    /**
+     * Sets angle of Y axis.
+     * @param {number} thetaY Angle of Y axis.
+     */
+    setThetaY(thetaY) {
+        this.thetaY = thetaY;
+    }
+
+    /**
+     * Sets angle of Z axis.
+     * @param {number} thetaZ Angle of Z axis.
+     */
+    setThetaZ(thetaZ) {
+        this.thetaZ = thetaZ;
+    }
+
+    /**
+     * Sets ESRCHeadPose.
+     * @param {ESRCHeadPose} other ESRCHeadPose instance.
+     */
+    setHeadPose(other) {
+        this.id = other.id;
+        this.thetaX = other.thetaX;
+        this.thetaY = other.thetaY;
+        this.thetaZ = other.thetaZ;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            thetaX: this.thetaX,
+            thetaY: this.thetaY,
+            thetaZ: this.thetaZ
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents attention structure.
+ */
+class ESRCAttention {
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {boolean} isAttend Whether attend or not.
+     */
+    isAttend;
+
+    /**
+     * ESRCAttention constructor.
+     * @param {number} id Identification.
+     * @param {boolean} isAttend Whether attend or not.
+     */
+    constructor(id, isAttend) {
+        this.id = id ?? -1;
+        this.isAttend = isAttend ?? false;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns whether attend or not.
+     * @returns {boolean} Whether attend or not.
+     */
+    getIsAttend() {
+        return this.isAttend
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Sets whether attend or not.
+     * @param {boolean} isAttend Whether attend or not.
+     */
+    setIsAttend(isAttend) {
+        this.isAttend = isAttend;
+    }
+
+    /**
+     * Sets ESRCAttention.
+     * @param {ESRCAttention} other ESRCAttention instance.
+     */
+    setAttention(other) {
+        this.id = other.id;
+        this.isAttend = other.isAttend;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            isAttend: this.isAttend
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents heart rate structure.
+ */
+class ESRCRemoteHR {
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {number} hr Heart rate.
+     */
+    hr;    
+    /**
+     * @property {number} snr Signal to noise ratio (%).
+     */
+    snr;
+
+    /**
+     * ESRCRemoteHR constructor.
+     * @param {number} id Identification.
+     * @param {number} hr Heart rate.
+     * @param {number} snr Signal to noise ratio (%).
+     */
+    constructor(id, hr, snr) {
+        this.id = id ?? -1;
+        this.hr = hr ?? 0;
+        this.snr = snr ?? 0;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns heart rate.
+     * @returns {number} Heart rate.
+     */
+    getHR() {
+        return this.hr;
+    }
+
+    /**
+     * Returns signal to noise ratio.
+     * @returns {number} Signal to noise ratio.
+     */ 
+    getSnr() {
+        return this.snr;
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Sets heart rate.
+     * @param {number} hr Heart rate.
+     */
+    setHR(hr) {
+        this.hr = hr;
+    }
+
+    /**
+     * Sets signal to noise ratio.
+     * @param {number} snr Signal to noise ratio.
+     */
+    setSnr(snr) {
+        this.snr = snr;
+    }
+
+    /**
+     * Sets ESRCRemoteHR.
+     * @param {ESRCRemoteHR} other ESRCRemoteHR instance.
+     */
+    setRemoteHR(other) {
+        this.id = other.id;
+        this.hr = other.hr;
+        this.snr = other.snr;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            hr: this.hr,
+            snr: this.snr
+        });
+
+        return str;
+    }
+}
+
+/**
+ * Represents heart rateprivateiability structure.
+ */
+class ESRCHRV {
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for count of HRV features.
+     * @static
+     */
+    static HRV_COUNT = 19;
+
+    /**
+     * @property {number} id Identificaiton.
+     */
+    id; 
+    /**
+     * @property {number} bpm Average of beat per minute (bpm).
+     */
+    bpm; 
+    /**
+     * @property {number} sdnn Standard deviation of NN intervals (ms).
+     */
+    sdnn;
+    /**
+     * @property {number} rmssd Root mean squre of successive differences (ms).
+     */
+    rmssd;
+    /**
+     * @property {number} pnn50 Percentage NN interval 50ms (%).
+     */
+    pnn50;
+    /**
+     * @property {number} vlf Very low frequency between 0.0033 and 0.04 Hz (ms2).
+     */
+    vlf;
+    /**
+     * @property {number} lf Low frequency between 0.04 and 0.15 Hz (ms2).
+     */
+    lf;     
+    /**
+     * @property {number} hf High frequency between 0.15 and 0.4 Hz (ms2).
+     */
+    hf;     
+    /**
+     * @property {number} vlfp Ratio of VLF to TP (%).
+     */
+    vlfp
+    /**
+     * @property {number} lfp Ratio of LF to TP (%).
+     */
+    lfp
+    /**
+     * @property {number} hfp Ratio of HF to TP (%).
+     */
+    hfp
+    /**
+     * @property {number} tp Total power between 0.0033 and 0.4 Hz (ms2).
+     */
+    tp
+    /**
+     * @property {number} lnVlf Logarithm of VLF.
+     */
+    lnVlf
+    /**
+     * @property {number} lnLf Logarithm of LF.
+     */
+    lnLf
+    /**
+     * @property {number} lnHf Logarithm of HF.
+     */
+    lnHf
+    /**
+     * @property {number} lnTp Logarithm of TP.
+     */
+    lnTp
+    /**
+     * @property {number} normLf Normalized LF (%).
+     */
+    normLf
+    /**
+     * @property {number} normHf Normalized HF (%).
+     */
+    normHf
+    /**
+     * @property {number} lfHf LF/HF (%).
+     */
+    lfHf
+    /**
+     * @property {number} cohRatio Coherence ratio.
+     */
+    cohRatio
+    /**
+     * @property {number} ppiCount PPI count.
+     */
+    ppiCount
+
+    /**
+     * ESRCHRV constructor.
+     * @param {number} id Identification.
+     * @param {number} bpm Average of beat per minute (bpm).
+     * @param {number} sdnn Standard deviation of NN intervals (ms).
+     * @param {number} rmssd Root mean squre of successive differences (ms).
+     * @param {number} pnn50 Percentage NN interval 50ms (%).
+     * @param {number} vlf Very low frequency between 0.0033 and 0.04 Hz (ms2). 
+     * @param {number} lf Low frequency between 0.04 and 0.15 Hz (ms2).
+     * @param {number} hf High frequency between 0.15 and 0.4 Hz (ms2).
+     * @param {number} vlfp Ratio of VLF to TP (%).
+     * @param {number} lfp Ratio of LF to TP (%).
+     * @param {number} hfp Ratio of HF to TP (%).
+     * @param {number} tp Total power between 0.0033 and 0.4 Hz (ms2).
+     * @param {number} lnVlf Logarithm of VLF. 
+     * @param {number} lnLf Logarithm of LF.
+     * @param {number} lnHf Logarithm of HF.
+     * @param {number} lnTp Logarithm of TP.
+     * @param {number} normLf Normalized LF (%).
+     * @param {number} normHf Normalized HF (%).
+     * @param {number} lfHf LF/HF (%)
+     * @param {number} cohRatio Coherence ratio.
+     * @param {number} ppiCount PPI count.
+     */
+    constructor(id, bpm, sdnn, rmssd, pnn50,
+                vlf, lf, hf, vlfp, lfp, hfp, tp,
+                lnVlf, lnLf, lnHf, lnTp, 
+                normLf, normHf, lfHf, cohRatio,
+                ppiCount) {
+        this.id = id ?? -1;
+        this.bpm = bpm ?? 0;
+        this.sdnn = sdnn ?? 0;
+        this.rmssd = rmssd ?? 0;
+        this.pnn50 = pnn50 ?? 0;
+        this.vlf = vlf ?? 0;
+        this.lf = lf ?? 0;
+        this.hf = hf ?? 0;
+        this.vlfp = vlfp ?? 0;
+        this.lfp = lfp ?? 0;
+        this.hfp = hfp ?? 0;
+        this.tp = tp ?? 0;
+        this.lnVlf = lnVlf ?? 0;
+        this.lnLf = lnLf ?? 0;
+        this.lnHf = lnHf ?? 0;
+        this.lnTp = lnTp ?? 0;
+        this.normLf = normLf ?? 0;
+        this.normHf = normHf ?? 0;
+        this.lfHf = lfHf ?? 0;
+        this.cohRatio = cohRatio ?? 0;
+        this.ppiCount = ppiCount ?? 0;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id
+    }
+    
+    /**
+     * Returns average of beat per minute (bpm).
+     * @returns {number} Average of beat per minute (bpm).
+     */
+    getBpm() {
+        return this.bpm;
+    }
+    
+    /**
+     * Returns standard deviation of NN intervals (ms).
+     * @returns {number} Standard deviation of NN intervals (ms).
+     */
+    getSdnn() {
+        return this.sdnn;
+    }
+    
+    /**
+     * Returns root mean squre of successive differences (ms).
+     * @returns {number} Root mean squre of successive differences (ms).
+     */
+    getRmssd() {
+        return this.rmssd;
+    }
+    
+    /**
+     * Returns percentage NN interval 50ms (%).
+     * @returns {number} Percentage NN interval 50ms (%).
+     */
+    getPnn50() {
+        return this.pnn50;
+    }
+    
+    /**
+     * Returns very low frequency between 0.0033 and 0.04 Hz (ms2).
+     * @returns {number} Very low frequency between 0.0033 and 0.04 Hz (ms2).
+     */
+    getVlf() {
+        return this.vlf;
+    }
+    
+    /**
+     * Returns low frequency between 0.04 and 0.15 Hz (ms2).
+     * @returns {number} Low frequency between 0.04 and 0.15 Hz (ms2).
+     */
+    getLf() {
+        return this.lf;
+    }
+    
+    /**
+     * Returns high frequency between 0.15 and 0.4 Hz (ms2).
+     * @returns {number} High frequency between 0.15 and 0.4 Hz (ms2).
+     */
+    getHf() {
+        return this.hf;
+    }
+    
+    /**
+     * Returns ratio of VLF to TP (%).
+     * @returns {number} Ratio of VLF to TP (%).
+     */
+    getVlfp() {
+        return this.vlfp;
+    }
+    
+    /**
+     * Returns ratio of LF to TP (%).
+     * @returns {number} Ratio of LF to TP (%).
+     */
+    getLfp() {
+        return this.lfp;
+    }
+    
+    /**
+     * Returns ratio of HF to TP (%).
+     * @returns {number} Ratio of HF to TP (%).
+     */
+    getHfp() {
+        return this.hfp;
+    }
+    
+    /**
+     * Returns total power between 0.0033 and 0.4 Hz (ms2).
+     * @returns {number} Total power between 0.0033 and 0.4 Hz (ms2).
+     */
+    getTp() {
+        return this.tp;
+    }
+    
+    /**
+     * Returns logarithm of VLF.
+     * @returns {number} Logarithm of VLF.
+     */
+    getLnVlf() {
+        return this.lnVlf;
+    }
+    
+    /**
+     * Returns logarithm of LF.
+     * @returns {number} Logarithm of LF.
+     */
+    getLnLf() {
+        return this.lnLf;
+    }
+    
+    /**
+     * Returns logarithm of HF.
+     * @returns {number} Logarithm of HF.
+     */
+    getLnHf() {
+        return this.lnHf;
+    }
+    
+    /**
+     * Returns logarithm of TP.
+     * @returns {number} Logarithm of TP.
+     */
+    getLnTp() {
+        return this.lnTp;
+    }
+    
+    /**
+     * Returns normalized LF (%).
+     * @returns {number} Normalized LF (%).
+     */
+    getNormLf() {
+        return this.normLf;
+    }
+    
+    /**
+     * Returns normalized HF (%).
+     * @returns {number} Normalized HF (%).
+     */
+    getNormHf() {
+        return this.normHf;
+    }
+    
+    /**
+     * Returns LF/HF (%).
+     * @returns {number} LF/HF (%).
+     */
+    getLfHf() {
+        return this.lfHf;
+    }
+    
+    /**
+     * Returns coherence ratio.
+     * @returns {number} Coherence ratio.
+     */
+    getCohRatio() {
+        return this.cohRatio;
+    }
+
+    /**
+     * Returns PPI count.
+     * @returns {number} PPI count.
+     */
+    getPPICount() {
+        return this.ppiCount;
+    }
+    
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+    
+    /**
+     * Sets average of beat per minute (bpm).
+     * @param {number} bpm Average of beat per minute (bpm).
+     */
+    setBpm(bpm) {
+        this.bpm = bpm;
+    }
+    
+    /**
+     * Sets standard deviation of NN intervals (ms).
+     * @param {number} sdnn Standard deviation of NN intervals (ms).
+     */
+    setSdnn(sdnn) {
+        this.sdnn = sdnn;
+    }
+    
+    /**
+     * Sets root mean squre of successive differences (ms).
+     * @param {number} rmssd Root mean squre of successive differences (ms).
+     */
+    setRmssd(rmssd) {
+        this.rmssd = rmssd;
+    }
+    
+    /**
+     * Sets percentage NN interval 50ms (%).
+     * @param {number} pnn50 Percentage NN interval 50ms (%).
+     */
+    setPnn50(pnn50) {
+        this.pnn50 = pnn50;
+    }
+    
+    /**
+     * Sets very low frequency between 0.0033 and 0.04 Hz (ms2).
+     * @param {number} vlf Very low frequency between 0.0033 and 0.04 Hz (ms2).
+     */
+    setVlf(vlf) {
+        this.vlf = vlf;
+    }
+    
+    /**
+     * Sets low frequency between 0.04 and 0.14 Hz (ms2).
+     * @param {number} lf Low frequency between 0.04 and 0.14 Hz (ms2).
+     */
+    setLF(lf) {
+        this.lf = lf;
+    }
+    
+    /**
+     * Sets high frequency between 0.14 and 0.4 Hz (ms2).
+     * @param {number} f High frequency between 0.14 and 0.4 Hz (ms2).
+     */
+    setHf(hf) {
+        this.hf = hf;
+    }
+    
+    /**
+     * Sets ratio of VLF to TP (%).
+     * @param {number} vlfp Ratio of VLF to TP (%).
+     */
+    setVlfp(vlfp) {
+        this.vlfp = vlfp;
+    }
+    
+    /**
+     * Sets ratio of LF to TP (%).
+     * @param {number} lfp Ratio of LF to TP (%).
+     */
+    setLfp(lfp) {
+        this.lfp = lfp;
+    }
+    
+    /**
+     * Sets ratio of HF to TP (%).
+     * @param {number} hfp Ratio of HF to TP (%).
+     */
+    setHfp(hfp) {
+        this.hfp = hfp;
+    }
+    
+    /**
+     * Sets total power between 0.0033 and 0.4 Hz (ms2).
+     * @param {number} tp Total power between 0.0033 and 0.4 Hz (ms2).
+     */
+    setTp(tp) {
+        this.tp = tp;
+    }
+    
+    /**
+     * Sets Logarithm of VLF.
+     * @param {number} lnVlf Logarithm of VLF.
+     */
+    setLnVlf(lnVlf) {
+        this.lnVlf = lnVlf;
+    }
+    
+    /**
+     * Sets Logarithm of LF.
+     * @param {number} lnLf Logarithm of LF.
+     */
+    setLnLf(lnLf) {
+        this.lnLf = lnLf;
+    }
+    
+    /**
+     * Sets Logarithm of HF.
+     * @param {number} lnHf Logarithm of HF.
+     */
+    setLnHf(lnHf) {
+        this.lnHf = lnHf;
+    }
+    
+    /**
+     * Sets Logarithm of TP.
+     * @param {number} lnTp Logarithm of TP.
+     */
+    setLnTp(lnTp) {
+        this.lnTp = lnTp;
+    }
+    
+    /**
+     * Sets normalized LF.
+     * @param {number} normLf Normalized LF.
+     */
+    setNormLf(normLf) {
+        this.normLf = normLf;
+    }
+    
+    /**
+     * Sets normalized HF.
+     * @param {number} normHf Normalized HF.
+     */
+    setNormHf(normHf) {
+        this.normHf = normHf;
+    }
+    
+    /**
+     * Sets LF/HF (%).
+     * @param {number} lfHf LF/HF (%).
+     */
+    setLfHf(lfHf) {
+        this.lfHf = lfHf;
+    }
+    
+    /**
+     * Sets coherence ratio.
+     * @param {number} cohRatio Coherence ratio.
+     */
+    setCohRatio(cohRatio) {
+        this.cohRatio = cohRatio;
+    }
+    
+    /**
+     * Sets PPI count.
+     * @param {number} ppiCount PPI count. 
+     */
+    setPPICount(ppiCount) {
+        this.ppiCount = ppiCount;
+    }
+
+    /**
+     * Sets ESRCHRV.
+     * @param {Array.&lt;number>} other HRV list .
+     */
+    setHRVList(other) {
+        this.bpm = other[0];
+        this.sdnn = other[1];
+        this.rmssd = other[2];
+        this.pnn50 = other[3];
+        this.vlf = other[4];
+        this.lf = other[5];
+        this.hf = other[6];
+        this.vlfp = other[7];
+        this.lfp = other[8];
+        this.hfp = other[9];
+        this.tp = other[10];
+        this.lnVlf = other[11];
+        this.lnLf = other[12];
+        this.lnHf = other[13];
+        this.lnTp = other[14];
+        this.normLf = other[15];
+        this.normHf = other[16];
+        this.lfHf = other[17];
+        this.cohRatio = other[18];
+    }
+
+    /**
+     * Sets ESRCHRV.
+     * @param {ESRCHRV} other ESRCHRV instance.
+     */
+    setHRV(other) {
+        this.id = other.id;
+        this.bpm = other.bpm;
+        this.sdnn = other.sdnn;
+        this.rmssd = other.rmssd;
+        this.pnn50 = other.pnn50;
+        this.vlf = other.vlf;
+        this.lf = other.lf;
+        this.hf = other.hf;
+        this.vlfp = other.vlfp;
+        this.lfp = other.lfp;
+        this.hfp = other.hfp;
+        this.tp = other.tp;
+        this.lnVlf = other.lnVlf;
+        this.lnLf = other.lnLf;
+        this.lnHf = other.lnHf;
+        this.lnTp = other.lnTp;
+        this.normLf = other.normLf;
+        this.normHf = other.normHf;
+        this.lfHf = other.lfHf;
+        this.cohRatio = other.cohRatio;
+        this.ppiCount = other.ppiCount;
+    }
+
+    /**
+     * Returns HRV list.
+     * @returns {Array.&lt;number>} HRV list.
+     */
+    toArray() {
+        const hrv = [
+            this.bpm, this.sdnn, this.rmssd, this.pnn50,
+            this.vlf, this.lf, this.hf,
+            this.vlfp, this.lfp, this.hfp, this.tp,
+            this.lnVlf, this.lnLf, this.lnHf, this.lnTp,
+            this.normLf, this.normHf, this.lfHf, this.cohRatio
+        ];
+
+        return hrv;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            bpm: this.bpm,
+            sdnn: this.sdnn,
+            rmssd: this.rmssd,
+            pnn50: this.pnn50,
+            vlf: this.vlf,
+            lf: this.lf,
+            hf: this.hf,
+            vlfp: this.vlfp,
+            lfp: this.lfp,
+            hfp: this.hfp,
+            tp: this.tp,
+            lnVlf: this.lnVlf,
+            lnLf: this.lnLf,
+            lnHf: this.lnHf,
+            lnTp: this.lnTp,
+            normLf: this.normLf,
+            normHf: this.normHf,
+            lfHf: this.lfHf,
+            cohRatio: this.cohRatio,
+            ppiCount: this.ppiCount
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents engagement structure.
+ */
+class ESRCEngagement {
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for count of engagement levels.
+     * @static
+     */
+    static EMOTION_COUNT = 3;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for unrecognized emotion.
+     * @static
+     */
+    static EMOTION_NONE = -1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of engagement level 0 (normal).
+     * @static
+     */
+    static EMOTION_NORMAL = 0;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of engagement level 1 (focusing).
+     * @static
+     */
+    static EMOTION_FOCUSING = 1;
+    /**
+     * @constant 
+     * @type {number}
+     * @description Constant for index of engagement level 2 (engagement).
+     * @static
+     */
+    static EMOTION_ENGAGEMENT = 2;
+
+    /**
+     * @property {number} id Identification.
+     */
+    id;
+    /**
+     * @property {number} emotionScore Score of emotion.
+     */
+    emotionScore;
+    /**
+     * @property {Array.&lt;number>} emotionProbs Probabilities of emotions.
+     */
+    emotionProbs;
+    /**
+     * @property {number} emotion Emotion.
+     */
+    emotion;
+
+    /**
+     * ESRCEngagement constructor.
+     * @param {number} id Identification.
+     * @param {number} emotionScore Score of emotion.
+     * @param {Array.&lt;number>} emotionProbs Probabilities of emotions.
+     * @param {number} emotion Emotion.
+     */
+    constructor(id, emotionScore, emotionProbs, emotion) {
+        this.id = id ?? -1;
+        this.emotionScore = emotionScore ?? 0;
+        this.emotionProbs = emotionProbs ?? Array(ESRCEngagement.EMOTION_COUNT);
+        this.emotion = emotion ?? ESRCEngagement.EMOTION_NONE;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns score of emotion.
+     * @returns {number} Score of emotion.
+     */
+    getEmotionScore() {
+        return this.emotionScore;
+    }
+
+    /**
+     * Return probabilities of emotions.
+     * @returns {Array.&lt;number>} Probabilities of emotion.
+     */
+    getEmotionProbs() {
+        return this.emotionProbs;
+    }
+
+    /**
+     * Return probability of emotion[index].
+     * @param {number} index Index of emotion.
+     * @returns {number} Probability of emotion[index].
+     */
+    getEmotionProb(index) {
+        return this.emotionProbs[index];
+    }
+
+    /**
+     * Returns emotion.
+     * @returns {number} Emotion.
+     */
+    getEmotion() {
+        return this.emotion;
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Sets score of emotion.
+     * @param {number} emotionScore Score of emotion.
+     */
+    setEmotionScore(emotionScore) {
+        this.emotionScore = emotionScore;
+    }
+
+    /**
+     * Set probabilities of emotions.
+     * @param {Array.&lt;number>} emotionProbs Probabilities of emotions.
+     */
+    setEmotionProbs(emotionProbs) {
+        this.emotionProbs = emotionProbs;
+    }
+
+    /**
+     * Sets probability of emotion[index].
+     * @param {number} index Index of emotion.
+     * @param {number} emotionProb Probability of emotion[index].
+     */
+    setEmotionProb(index, emotionProb) {
+        this.emotionProbs[index] = emotionProb;
+    }
+
+    /**
+     * Sets emotion.
+     * @param {number} emotion Emotion.
+     */
+    setEmotion(emotion) {
+        this.emotion = emotion;
+    }
+
+    /**
+     * Sets ESRCEngagement.
+     * @param {ESRCEngagement} other ESRCEngagement instance.
+     */
+    setEngagement(other) {
+        this.emotionScore = other.emotionScore;
+        this.emotionProbs = other.emotionProbs;
+        this.emotion = other.emotion;
+    }
+
+    /**
+     * Returns string of emotion.
+     * @returns {string} String of emotion.
+     */
+    getEmotionStr() {
+        let emotionStr = "NONE";
+
+        switch (this.emotion) {
+            case ESRCEngagement.EMOTION_NORMAL:
+                emotionStr = "NORMAL";
+                break;
+            case ESRCEngagement.EMOTION_FOCUSING:
+                emotionStr = "FOCUSING";
+                break;
+            case ESRCEngagement.EMOTION_ENGAGEMENT:
+                emotionStr = "ENGAGEMENT";
+                break;
+            default:
+                emotionStr = "NONE";
+        }
+
+        return emotionStr;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            emotionScore: this.emotionScore,
+            emotionProbs: this.emotionProbs,
+            emotion: this.emotion
+        });
+        
+        return str;
+    }
+}
+
+/**
+ * Represents progress ratio of any processing.
+ */
+class ESRCProgressRatio {
+    /**
+     * @property {number} id Identiticaiton.
+     */
+    id;
+    /**
+     * @property {number} progress Progress (0~100).
+     */
+    progress;
+
+    /**
+     * ESRCProgressRatio constructor.
+     * @param {number} id Identification
+     * @param {number} progress Progress (0~100).
+     */
+    constructor(id, progress) {
+        this.id = id ?? -1;
+        this.progress = progress ?? 0;
+    }
+
+    /**
+     * Returns identification.
+     * @returns {number} Identification.
+     */
+    getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns progress (0~100).
+     * @returns {number} Progress (0~100).
+     */
+    getProgress() {
+        return this.progress;
+    }
+
+    /**
+     * Sets identification.
+     * @param {number} id Identification.
+     */
+    setId(id) {
+        this.id = id;
+    }
+
+    /**
+     * Sets progress (0~100).
+     * @param {number} progress Progress (0~100).
+     */
+    setProgress(progress) {
+        this.progress = progress;
+    }
+
+    /**
+     * Sets ESRCProgressRatio.
+     * @param {ESRCProgressRatio} other ESRCProgressRatio instance.
+     */
+    setProgressRatio(other) {
+        this.id = other.id;
+        this.progress = other.progress;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            id: this.id,
+            progress: this.progress
+        });
+        
+        return str;
+    } 
+}
+
+/**
+ * Represents property for initialization of ESRC.
+ */
+class ESRCProperty {
+    /**
+     * @property {boolean} enableMeasureEnv Whether analyze measurement environment or not.
+     */
+    enableMeasureEnv;
+    /**
+     * @property {boolean} enableFace Whether detect face or not.
+     */
+    enableFace;
+    /**
+     * @property {boolean} enableFacialLandmark Whether detect facial landmark or not. If enableFace is false, it is also automatically set to false.
+     */
+    enableFacialLandmark;
+    /**
+     * @property {boolean} enableFacialActionUnit Whether analyze facial action unit or not. If enableFace or enableFacialLandmark is false, it is also automatically set to false.
+     */
+    enableFacialActionUnit;
+    /**
+     * @property {boolean} enableBasicFacialExpression Whether recognize basic facial expression or not. If enableFace is false, it is also automatically set to false.
+     */
+    enableBasicFacialExpression;
+    /**
+     * @property {boolean} enableValenceFacialExpression Whether recognize valence facial expression or not. If enableFace is false, it is also automatically set to false.
+     */
+    enableValenceFacialExpression;
+    /**
+     * @property {boolean} enableRemoteHR Whether estimate remote hr or not.
+     */
+    enableRemoteHR;
+    /**
+     * @property {boolean} enableHRV Whether analyze HRV or not. If enableRemoteHR is false, it is also automatically
+     */
+    enableHRV;
+    /**
+     * @property {boolean} enableEngagement Whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+     */
+    enableEngagement;
+    
+    /**
+     * ESRCProperty constructor.
+     * @param {boolean} enableMeasureEnv Whether analyze measurement environment or not.
+     * @param {boolean} enableFace Whether detect face or not.
+     * @param {boolean} enableFacialLandmark Whether detect facial landmark or not. If enableFace is false, it is also automatically set to false.
+     * @param {boolean} enableFacialActionUnit Whether analyze facial action unit or not. If enableFace or enableFacialLandmark is false, it is also automatically set to false.
+     * @param {boolean} enableBasicFacialExpression Whether recognize basic facial expression or not. If enableFace is false, it is also automatically set to false.
+     * @param {boolean} enableValenceFacialExpression Whether recognize valence facial expression or not. If enableFace is false, it is also automatically set to false.
+     * @param {boolean} enableRemoteHR Whether estimate remote hr or not.
+     * @param {boolean} enableHRV Whether analyze HRV or not. If enableRemoteHR is false, it is also automatically set to false.
+     * @param {boolean} enableEngagement Whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+     */
+    constructor(enableMeasureEnv, enableFace, enableFacialLandmark,
+                enableFacialActionUnit, enableBasicFacialExpression, enableValenceFacialExpression,
+                enableRemoteHR, enableHRV, enableEngagement) {
+        this.enableMeasureEnv = enableMeasureEnv ?? false;
+        this.enableFace = enableFace ?? false;
+        this.enableFacialLandmark = enableFacialLandmark ?? false;
+        this.enableFacialActionUnit = enableFacialActionUnit ?? false;
+        this.enableBasicFacialExpression = enableBasicFacialExpression ?? false;
+        this.enableValenceFacialExpression = enableValenceFacialExpression ?? false;
+        this.enableRemoteHR = enableRemoteHR ?? false;
+        this.enableHRV = enableHRV ?? false;
+        this.enableEngagement = enableEngagement ?? false;
+        this.correct();
+    }
+
+    /**
+     * Correct enables with dependencies.
+     */
+    correct() {
+        // If enableFace is false
+        if (!this.enableFace) {
+            this.enableFacialLandmark = false;
+            this.enableFacialActionUnit = false;
+            this.enableBasicFacialExpression = false;
+            this.enableValenceFacialExpression = false;
+            this.enableRemoteHR = false;
+            this.enableHRV = false;
+        }
+
+        // If enableFacialLandmark is false
+        if (!this.enableFacialLandmark) {
+            this.enableFacialActionUnit = false;
+        }
+
+        // If enableRemoteHR is false
+        if (!this.enableRemoteHR) {
+            this.enableHRV = false;
+            this.enableEngagement = false;
+        }
+    }
+
+    /**
+     * Returns whether analyze measurement environment or not.
+     * @returns {boolean} Whether analyze measurement environment or not.
+     */
+    getEnableMeasureEnv() {
+        return this.enableMeasureEnv
+    }
+    
+    /**
+     * Returns whether detect face or not.
+     * @returns {boolean} Whether detect face or not.
+     */
+    getEnableFace() {
+        return this.enableFace
+    }
+
+    /**
+     * Returns whether detect facial landmark or not. If enableFace is false, it is also automatically set to false.
+     * @returns {boolean} Whether detect facial landmark or not. If enableFace is false, it is also automatically set to false.
+     */
+    getEnableFacialLandmark() {
+        return this.enableFacialLandmark
+    }
+    
+    /**
+     * Returns whether analyze facial action unit or not. If enableFace or enableFacialLandmark is false, it is also automatically set to false.
+     * @returns {boolean} Whether analyze facial action unit or not. If enableFace or enableFacialLandmark is false, it is also automatically set to false.
+     */
+    getEnableFacialActionUnit() {
+        return this.enableFacialActionUnit
+    }
+    
+    /**
+     * Returns whether recognize basic facial expression or not. If enableFace is false, it is also automatically set to false.
+     * @returns {boolean} Whether recognize basic facial expression or not. If enableFace is false, it is also automatically set to false.
+     */
+    getEnableBasicFacialExpression() {
+        return this.enableBasicFacialExpression
+    }
+    
+    /**
+     * Returns whether recognize valence facial expression or not. If enableFace is false, it is also automatically set to false.
+     * @returns {boolean} Whether recognize valence facial expression or not. If enableFace is false, it is also automatically set to false.
+     */
+    getEnableValenceFacialExpression() {
+        return this.enableValenceFacialExpression
+    }
+    
+    /**
+     * Returns whether estimate remote hr or not.
+     * @returns {boolean} Whether estimate remote hr or not.
+     */
+    getEnableRemoteHR() {
+        return this.enableRemoteHR
+    }
+    
+    /**
+     * Returns whether analyze HRV or not. If enableRemoteHR is false, it is also automatically
+     * @returns {boolean} Whether analyze HRV or not. If enableRemoteHR is false, it is also automatically
+     */
+    getEnableHRV() {
+        return this.enableHRV
+    }
+    
+    /**
+     * Returns whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+     * @returns {boolean} Whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+     */
+    getEnableEngagement() {
+        return this.enableEngagement
+    }
+
+    /**
+     * Sets whether analyze measurement environment or not.
+     * @param {boolean} enableMeasureEnv Whether analyze measurement environment or not.
+     */
+    setEnableMeasureEnv(enableMeasureEnv) {
+        this.enableMeasureEnv = enableMeasureEnv
+    }
+    
+    /**
+     * Sets whether detect face or not.
+     * @param {boolean} enableFace Whether detect face or not.
+     */
+    setEnableFace(enableFace) {
+        this.enableFace = enableFace
+    }
+
+    /**
+     * Sets whether detect facial landmark or not. If enableFace is false, it is also automatically set to false.
+     * @param {boolean} enableFacialLandmark Whether detect facial landmark or not. If enableFace is false, it is also automatically set to false.
+     */
+    setEnableFacialLandmark(enableFacialLandmark) {
+        this.enableFacialLandmark = enableFacialLandmark
+    }
+    
+    /**
+     * Sets whether analyze facial action unit or not. If enableFace or enableFacialLandmark is false, it is also automatically set to false.
+     * @param {boolean} enableFacialActionUnit Whether analyze facial action unit or not. If enableFace or enableFacialLandmark is false, it is also automatically set to false.
+     */
+    setEnableFacialActionUnit(enableFacialActionUnit) {
+        this.enableFacialActionUnit = enableFacialActionUnit
+    }
+    
+    /**
+     * Sets whether recognize basic facial expression or not. If enableFace is false, it is also automatically set to false.
+     * @param {boolean} enableBasicFacialExpression Whether recognize basic facial expression or not. If enableFace is false, it is also automatically set to false.
+     */
+    setEnableBasicFacialExpression(enableBasicFacialExpression) {
+        this.enableBasicFacialExpression = enableBasicFacialExpression
+    }
+    
+    /**
+     * Sets whether recognize valence facial expression or not. If enableFace is false, it is also automatically set to false.
+     * @param {boolean} enableValenceFacialExpression Whether recognize valence facial expression or not. If enableFace is false, it is also automatically set to false.
+     */
+    setEnableValenceFacialExpression(enableValenceFacialExpression) {
+        this.enableValenceFacialExpression = enableValenceFacialExpression
+    }
+    
+    /**
+     * Sets whether analyze HRV or not. If enableRemoteHR is false, it is also automatically
+     * @param {boolean} enableRemoteHR Whether analyze HRV or not. If enableRemoteHR is false, it is also automatically
+     */
+    setEnableRemoteHR(enableRemoteHR) {
+        this.enableRemoteHR = enableRemoteHR
+    }
+    
+    /**
+     * Sets whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+     * @param {boolean} enableHRV Whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+     */
+    setEnableHRV(enableHRV) {
+        this.enableHRV = enableHRV
+    }
+    
+    /**
+     * Sets whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+     * @param {boolean} enableEngagement Whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+     */
+    setEnableEngagement(enableEngagement) {
+        this.enableEngagement = enableEngagement
+    }
+
+    /**
+     * Sets ESRCProperty.
+     * @param {ESRCProperty} other ESRCProperty instance.
+     */
+    setProperty(other) {
+        this.enableMeasureEnv = other.enableMeasureEnv;
+        this.enableFace = other.enableFace;
+        this.enableFacialLandmark = other.enableFacialLandmark;
+        this.enableFacialActionUnit = other.enableFacialActionUnit;
+        this.enableBasicFacialExpression = other.enableBasicFacialExpression;
+        this.enableValenceFacialExpression = other.enableValenceFacialExpression;
+        this.enableRemoteHR = other.enableRemoteHR;
+        this.enableHRV = other.enableHRV;
+        this.enableEngagement = other.enableEngagement;
+    }
+
+    /**
+     * Returns string following JSON structure.
+     * @returns {string} JSON string.
+     */
+    toString() {
+        const str = JSON.stringify({
+            enableMeasureEnv: this.enableMeasureEnv,
+            enableFace: this.enableFace,
+            enableFacialLandmark: this.enableFacialLandmark,
+            enableFacialActionUnit: this.enableFacialActionUnit,
+            enableBasicFacialExpression: this.enableBasicFacialExpression,
+            enableValenceFacialExpression: this.enableValenceFacialExpression,
+            enableRemoteHR: this.enableRemoteHR,
+            enableHRV: this.enableHRV,
+            enableEngagement: this.enableEngagement
+        });
+        
+        return str;
+    }
+}
+
+module.exports = {
+    ESRCPoint2f, 
+    ESRCMat, 
+    ESRCMeasureEnv,
+    ESRCFace, 
+    ESRCFacialLandmark,
+    ESRCFacialActionUnit, 
+    ESRCBasicFacialExpression, 
+    ESRCValenceFacialExpression,
+    ESRCRemoteHR, 
+    ESRCHRV, 
+    ESRCEngagement,
+    ESRCProgressRatio, 
+    ESRCProperty 
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ESRCType.html">ESRCType</a></li></ul><h3>Classes</h3><ul><li><a href="APIClient.html">APIClient</a></li><li><a href="BasicFacialExpressionRecognizer.html">BasicFacialExpressionRecognizer</a></li><li><a href="EngagementRecognizer.html">EngagementRecognizer</a></li><li><a href="ESRC.html">ESRC</a></li><li><a href="ESRCHandler.html">ESRCHandler</a></li><li><a href="ESRCLicense.html">ESRCLicense</a></li><li><a href="FaceDetector.html">FaceDetector</a></li><li><a href="FacialActionUnitAnalyzer.html">FacialActionUnitAnalyzer</a></li><li><a href="FacialLandmarkDetector.html">FacialLandmarkDetector</a></li><li><a href="FileManager.html">FileManager</a></li><li><a href="MeasureEnvAnalyzer.html">MeasureEnvAnalyzer</a></li><li><a href="module-ESRCType-ESRCAttention.html">ESRCAttention</a></li><li><a href="module-ESRCType-ESRCBasicFacialExpression.html">ESRCBasicFacialExpression</a></li><li><a href="module-ESRCType-ESRCEngagement.html">ESRCEngagement</a></li><li><a href="module-ESRCType-ESRCFace.html">ESRCFace</a></li><li><a href="module-ESRCType-ESRCFacialActionUnit.html">ESRCFacialActionUnit</a></li><li><a href="module-ESRCType-ESRCFacialLandmark.html">ESRCFacialLandmark</a></li><li><a href="module-ESRCType-ESRCHeadPose.html">ESRCHeadPose</a></li><li><a href="module-ESRCType-ESRCHRV.html">ESRCHRV</a></li><li><a href="module-ESRCType-ESRCMat.html">ESRCMat</a></li><li><a href="module-ESRCType-ESRCMeasureEnv.html">ESRCMeasureEnv</a></li><li><a href="module-ESRCType-ESRCPoint2f.html">ESRCPoint2f</a></li><li><a href="module-ESRCType-ESRCProgressRatio.html">ESRCProgressRatio</a></li><li><a href="module-ESRCType-ESRCProperty.html">ESRCProperty</a></li><li><a href="module-ESRCType-ESRCRemoteHR.html">ESRCRemoteHR</a></li><li><a href="module-ESRCType-ESRCValenceFacialExpression.html">ESRCValenceFacialExpression</a></li><li><a href="OpenCVLoader.html">OpenCVLoader</a></li><li><a href="RemoteHREstimator.html">RemoteHREstimator</a></li><li><a href="ValenceFacialExpressionRecognizer.html">ValenceFacialExpressionRecognizer</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Jun 27 2022 16:21:06 GMT+0900 (대한민국 표준시)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

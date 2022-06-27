@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>ESRC SDK for JavaScript</h1>
+<p><a href="https://github.com/esrc-official/ESRC-SDK-JavaScript"><img src="https://img.shields.io/badge/platform-JAVASCRIPT-orange.svg" alt="Platform"></a>
+<a href="https://github.com/esrc-official/ESRC-SDK-JavaScript"><img src="https://img.shields.io/badge/language-JAVASCRIPT-orange.svg" alt="Languages"></a>
+<a href="https://github.com/esrc-official/ESRC-SDK-JavaScript/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/License-Commercial-brightgreen.svg" alt="Commercial License"></a></p>
+<h2>Table of contents</h2>
+<ol>
+<li><a href="#about-esrc-sdk">About ESRC SDK</a></li>
+<li><a href="#install-esrc-sdk">Install ESRC SDK</a></li>
+<li><a href="#making-your-first-recognition">Making your first recognition</a></li>
+</ol>
+<br />
+<h2>About ESRC SDK</h2>
+<p>Through our <strong>ESRC SDK</strong> for JavaScript, you can efficiently integrate real-time recognition of facial expression, heart response and emotions into your mobile app. This and other pages in the Getting Started provide the ESRC SDK’s structure and installation steps, then goes through the preliminary steps of implementing the ESRC SDK in your own project.</p>
+<!-- ### Supported browsers
+
+| Browser|Supported versions|
+| :---: | :--- |
+| Internet Explorer | 10 or higher |
+| Edge | 13 or higher |
+| Chrome | 16 or higher |
+| Firefox | 11 or higher |
+| Safari | 7 or higher |
+| Opera | 12.1 or higher |
+| iOS Safari | 7 or higher |
+| Android Browser | 4.4 (Kitkat) or higher |  -->
+<h3>Key functions</h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Measurement Environment Analysis</td>
+<td>Analyze measurement environment including brightness.</td>
+</tr>
+<tr>
+<td>Face Detection</td>
+<td>Detect a single face using a front camera on mobile.</td>
+</tr>
+<tr>
+<td>Facial Landmark Detection</td>
+<td>Detect x and y coordinates of 68 facial landmarks in 2D space from the detected face.</td>
+</tr>
+<tr>
+<td>Facial Action Unit Analysis</td>
+<td>Extract centroid, area, theta and R distance of each 39 facial action unit from the detected 68 facial landmarks based on Facial Action Coding System determined by Paul Ekman.</td>
+</tr>
+<tr>
+<td>Basic Facial Expression Recognition</td>
+<td>Recognize 7 facial expressions consist of neutral, happiness, sadness, surprise, anger, disgust and fear based on 6 basic emotions.</td>
+</tr>
+<tr>
+<td>Valence Facial Expression Recognition</td>
+<td>Recognize 3 facial expressions consist of neutral, positive and negative based on valence of two-dimensional emotion.</td>
+</tr>
+<tr>
+<td>Heart Rate Estimation</td>
+<td>Estimate heart rate from facial color variations and head movements caused by heartbeat using Remote Photoplethysmography and Ballistocardiography.</td>
+</tr>
+<tr>
+<td>Heart Rate Variability Analysis</td>
+<td>Extract 19 variables of heart rate variability reflecting autonomic nervous system activity from the accumulated heart rates.</td>
+</tr>
+<tr>
+<td>Engagement Recognition</td>
+<td>Recognize engagement level from balance of autonomic nervous system by heart rate variability analysis.</td>
+</tr>
+</tbody>
+</table>
+<h3>Try the sample app</h3>
+<p>Our sample app has the core features of the ESRC SDK. Download the app from our <a href="https://github.com/esrc-official/ESRC-JavaScript">GitHub repository</a> to get an idea of what you can build with the actual SDK and start building in your project.</p>
+<blockquote>
+<p>Note: The fastest way to see our ESRC SDK in action is to build your app on top of our sample app. Make sure to change the application ID of the sample app to your own.</p>
+</blockquote>
+<h2>Install ESRC SDK</h2>
+<p>This page provides a step-by-step guide that demonstrates how to build and configure an in-app bio-analysis using the ESRC SDK.</p>
+<h3>Step 1: Download and install the ESRC SDK</h3>
+<p>If you're familiar with using external libraries or SDKs, installing the ESRC SDK is simple. You can install the ESRC Face SDK with package manager <code>npm</code> by entering the command below on the command line.</p>
+<ul>
+<li><strong>Npm</strong></li>
+</ul>
+<blockquote>
+<p>Node: To use npm to install the ESRC SDK, Node.js must be first installed on your system.</p>
+</blockquote>
+<pre class="prettyprint source lang-bash"><code>$ npm install @esrc/esrc (request to npm server)
+</code></pre>
+<p>Install via <code>Npm</code> and import like below in your <code>JavaScript</code> file.</p>
+<pre class="prettyprint source lang-javascript"><code>// Define a global variable 'Module' with a method 'onLoadedESRC'
+Module = {
+    onLoadedESRC() {
+        // do somthing...
+    }
+}
+// Load '@esrc/esrc' assinging the value to the global variable 'ESRC'
+require(&quot;@esrc/esrc&quot;);
+</code></pre>
+<h3>Step 2: Download and install the assets</h3>
+<p>Download the <code>assets</code> file from our <a href="https://github.com/esrc-official/ESRC-SDK-JavaScript/tree/master/assets">GitHub repository</a>. Copy the downloaded assets file into your project directory.</p>
+<h2>Making your first recognition</h2>
+<p>The ESRC SDK simplifies vision features into an effortless and straightforward process. To recognize your facial expression, do the following steps:</p>
+<p>This page provides a step-by-step guide that demonstrates how to build and configure an in-app face and bio-analysis using ESRC SDK. License key can be received by requesting by the email: <strong>esrc@esrc.co.kr</strong>.</p>
+<h3>Step 1: Initialize the ESRC SDK</h3>
+<p>Initialization binds the ESRC SDK to JavaScript, thereby allowing it to use a camera in your mobile. To the <code>initWithApplicationId()</code> method, pass the <strong>App ID</strong> of your ESRC application to initialize the ESRC SDK and the <strong>ESRCLicenseHandler</strong> to received callback for validation of the App ID.</p>
+<pre class="prettyprint source lang-javascript"><code>// Initialize ESRC
+ESRC.initWithApplicationId(&quot;APP_ID&quot;, (isValid) => {
+    if (isValid) {
+        // Application ID is valid, so do somthing...
+    } 
+});
+</code></pre>
+<blockquote>
+<p>Note: The <code>ESRC.initWithApplicationId()</code> method must be called once across your web app. It is recommended to initialize the ESRC SDK in the <code>onLoadedESRC()</code> method of the Application instance.</p>
+</blockquote>
+<h3>Step 2: Start the ESRC SDK</h3>
+<p>Start the ESRC SDK to recognize your facial expression. To the <code>start()</code> method, pass the <code>ESRCProperty</code> to select analysis modules and the <code>ESRCHandler</code> to handle the results. You should implement the callback method of <code>ESRCHandler</code> interface. So, you can receive the results of face, facial landmark, facial action unit and facial expression, heart rate, heart rate variability and emotion. Please refer to <strong><a href="https://github.com/esrc-official/ESRC-JavaScript">sample app</a></strong>.</p>
+<pre class="prettyprint source lang-javascript"><code>// Initialize property
+var property = new ESRCType.ESRCProperty(
+    true,  // Whether analyze measurement environment or not.
+    true,  // Whether detect face or not.
+    true,  // Whether detect facial landmark or not. If enableFace is false, it is also automatically set to false.
+    true,  // Whether analyze facial action unit or not. If enableFace or enableFacialLandmark is false, it is also automatically set to false.
+    true,  // Whether recognize basic facial expression or not. If enableFace is false, it is also automatically set to false.
+    true,  // Whether recognize valence facial expression or not. If enableFace is false, it is also automatically set to false.
+    true,  // Whether estimate remote hr or not.
+    true,  // Whether analyze HRV or not. If enableRemoteHR is false, it is also automatically set to false.
+    true  // Whether recognize engagement or not. If enableRemoteHR is false, it is also automatically set to false.
+);
+
+// Initialize handler
+var handler = new ESRCHandler();
+handler.onAnalyzeMeasureEnv = function(measureEnv) {
+    // do something...
+}
+handler.onDetectedFace = function(face) {
+    // do something...
+}
+handler.onDetectedFacialLandmark = function(facialLandmark) {
+    // do something...
+}
+handler.onAnalyzedFacialActionUnit = function(facialActionUnit) {
+    // do something...
+}
+handler.onRecognizedBasicFacialExpression = function(basicFacialExpression) {
+    // do something...
+}
+handler.onRecognizedValenceFacialExpression = function(valenceFacialExpression) {
+    // do something...
+}
+handler.didChangedProgressRatioOnRemoteHR = function(progressRatio) {
+    // do something...
+}
+handler.onEstimatedRemoteHR = function(remoteHR) {
+    // do something...
+}
+handler.didChangedProgressRatioOnHRV = function(progressRatio) {
+    // do something...
+}
+handler.onAnalyzedHRV = function(hrv) {
+    // do something...
+}
+handler.onRecognizedEngagement = function(engagement) {
+    // do something...
+}
+// Start ESRC
+ESRC.start(property, handler);
+</code></pre>
+<h3>Step 3: Feed the ESRC SDK</h3>
+<p>Feed <code>ESRCType.ESRCMat</code> on the ESRC SDK. To the <code>feed()</code> method, pass the <code>ESRCType.ESRCMat</code> image received using a camera in real-time. Please do it at 10 fps or higher.</p>
+<pre class="prettyprint source lang-javascript"><code>ESRC.feed(ESRCMat);
+</code></pre>
+<h3>Step 4: Stop the ESRC SDK</h3>
+<p>When your app is not use the camera or destroyed, stop the ESRC SDK.</p>
+<pre class="prettyprint source lang-javascript"><code>ESRC.stop()
+</code></pre>
+<h2>Changelogs</h2>
+<h3>v0.1.1 (JUNE 27, 2022)</h3>
+<p>If you want to check the record of other versions, go to <a href="https://github.com/esrc-official/ESRC-SDK-JavaScript/blob/master/CHANGELOG.md">Change Log</a>.</p>
+<ul>
+<li>Initial draft.</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ESRCType.html">ESRCType</a></li></ul><h3>Classes</h3><ul><li><a href="APIClient.html">APIClient</a></li><li><a href="BasicFacialExpressionRecognizer.html">BasicFacialExpressionRecognizer</a></li><li><a href="EngagementRecognizer.html">EngagementRecognizer</a></li><li><a href="ESRC.html">ESRC</a></li><li><a href="ESRCHandler.html">ESRCHandler</a></li><li><a href="ESRCLicense.html">ESRCLicense</a></li><li><a href="FaceDetector.html">FaceDetector</a></li><li><a href="FacialActionUnitAnalyzer.html">FacialActionUnitAnalyzer</a></li><li><a href="FacialLandmarkDetector.html">FacialLandmarkDetector</a></li><li><a href="FileManager.html">FileManager</a></li><li><a href="MeasureEnvAnalyzer.html">MeasureEnvAnalyzer</a></li><li><a href="module-ESRCType-ESRCAttention.html">ESRCAttention</a></li><li><a href="module-ESRCType-ESRCBasicFacialExpression.html">ESRCBasicFacialExpression</a></li><li><a href="module-ESRCType-ESRCEngagement.html">ESRCEngagement</a></li><li><a href="module-ESRCType-ESRCFace.html">ESRCFace</a></li><li><a href="module-ESRCType-ESRCFacialActionUnit.html">ESRCFacialActionUnit</a></li><li><a href="module-ESRCType-ESRCFacialLandmark.html">ESRCFacialLandmark</a></li><li><a href="module-ESRCType-ESRCHeadPose.html">ESRCHeadPose</a></li><li><a href="module-ESRCType-ESRCHRV.html">ESRCHRV</a></li><li><a href="module-ESRCType-ESRCMat.html">ESRCMat</a></li><li><a href="module-ESRCType-ESRCMeasureEnv.html">ESRCMeasureEnv</a></li><li><a href="module-ESRCType-ESRCPoint2f.html">ESRCPoint2f</a></li><li><a href="module-ESRCType-ESRCProgressRatio.html">ESRCProgressRatio</a></li><li><a href="module-ESRCType-ESRCProperty.html">ESRCProperty</a></li><li><a href="module-ESRCType-ESRCRemoteHR.html">ESRCRemoteHR</a></li><li><a href="module-ESRCType-ESRCValenceFacialExpression.html">ESRCValenceFacialExpression</a></li><li><a href="OpenCVLoader.html">OpenCVLoader</a></li><li><a href="RemoteHREstimator.html">RemoteHREstimator</a></li><li><a href="ValenceFacialExpressionRecognizer.html">ValenceFacialExpressionRecognizer</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Jun 27 2022 16:21:06 GMT+0900 (대한민국 표준시)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

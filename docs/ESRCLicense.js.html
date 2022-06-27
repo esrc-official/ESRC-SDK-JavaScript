@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ESRCLicense.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ESRCLicense.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const APIClient = require("./APIClient.js");
+
+/**
+ * ESRCLicense class.
+ * 
+ * @author Hyunwoo Lee &lt;lhw4846@esrc.co.kr>
+ * @license Copyright (c) 2022 Emotion Science Research Center all rights reserved.
+ */
+class ESRCLicense {
+    /**
+     * @property {ESRCLicense} instance ESRCLicense intance.
+     * @static
+     */
+    static instance = undefined;
+    /**
+     * @property {string} appId Application ID.
+     */
+    appId = "";
+    /**
+     * @property {boolean} isValid Whether the license is valid or not.
+     */
+    isValid = false;
+
+    /**
+     * ESRCLicense constructor.
+     * @param {string} appId Application ID.
+     */
+    constructor(appId) {
+        this.appId = appId;
+    }
+
+    /**
+     * Returns ESRCLicense instance.
+     * @returns {ESRCLicense} ESRCLicense instance.
+     */
+    static getInstance() {
+        if (this.instance === undefined) {
+            throw new Error("ESRCLicense instance hasnt' been initialized.");
+        } else {
+            return this.instance;
+        }
+    }
+
+    /**
+     * Returns true if ESRCLicense is initialized. Otherwise, false.
+     * @returns {boolean} Returns true if ESRCLicense is initialized. Otherwise, false.
+     */
+    static isInitialized() {
+        return this.instsance !== undefined;
+    }
+
+    /**
+     * Initializes ESRCLicense with given application ID.
+     * @param {string} appId Application ID.
+     * @param {commonCallback} callback Callback handler.
+     * @returns {boolean} Returns true if the initialization is successful. Otherwise, false.
+     */
+    static init(appId, callback) {
+        let result = true;
+
+        if (this.instance === undefined) {
+            this.instance = new ESRCLicense(appId);
+            this.instance.validateLicense(appId, callback);
+        } else {
+            result = this.instance.setNewApplicationId(appId, callback);
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns application ID.
+     * @returns {string} Application ID.
+     */
+    static getApplicationId() {
+        return this.getInstance().appid;
+    }
+
+    /**
+     * Returns whether the license is validated or not.
+     * @returns {boolean} Returns true if the license is validated. Otherwise, false.
+     */
+    static isValidated() {
+        return this.getInstance().isValid;
+    }
+
+    /**
+     * Sets new application ID;
+     * @param {string} newAppId Application ID.
+     * @param {commonCallback} callback Callback handler.
+     * @returns {boolean} Returns true if the set is successful. Otherewise, false.
+     */
+    setNewApplicationId(newAppId, callback) {
+        this.appId = newAppId;
+
+        APIClient.validateLicense(newAppId, callback);
+        result = true;
+
+        return result;
+    }
+
+    /**
+     * Validate application ID.
+     * @param {string} appId Application ID.
+     * @param {commonCallback} callback Callback handler.
+     */
+    validateLicense(appId, callback) {
+        if (!this.isValid) {
+            APIClient.validateLicense(appId, (isValid) => {
+                if (isValid) {
+                    this.isValid = true;
+                } else {
+                    this.isValid = false;
+                }
+                callback(isValid);
+            });
+        }
+    }
+}
+
+module.exports = ESRCLicense;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ESRCType.html">ESRCType</a></li></ul><h3>Classes</h3><ul><li><a href="APIClient.html">APIClient</a></li><li><a href="BasicFacialExpressionRecognizer.html">BasicFacialExpressionRecognizer</a></li><li><a href="EngagementRecognizer.html">EngagementRecognizer</a></li><li><a href="ESRC.html">ESRC</a></li><li><a href="ESRCHandler.html">ESRCHandler</a></li><li><a href="ESRCLicense.html">ESRCLicense</a></li><li><a href="FaceDetector.html">FaceDetector</a></li><li><a href="FacialActionUnitAnalyzer.html">FacialActionUnitAnalyzer</a></li><li><a href="FacialLandmarkDetector.html">FacialLandmarkDetector</a></li><li><a href="FileManager.html">FileManager</a></li><li><a href="MeasureEnvAnalyzer.html">MeasureEnvAnalyzer</a></li><li><a href="module-ESRCType-ESRCAttention.html">ESRCAttention</a></li><li><a href="module-ESRCType-ESRCBasicFacialExpression.html">ESRCBasicFacialExpression</a></li><li><a href="module-ESRCType-ESRCEngagement.html">ESRCEngagement</a></li><li><a href="module-ESRCType-ESRCFace.html">ESRCFace</a></li><li><a href="module-ESRCType-ESRCFacialActionUnit.html">ESRCFacialActionUnit</a></li><li><a href="module-ESRCType-ESRCFacialLandmark.html">ESRCFacialLandmark</a></li><li><a href="module-ESRCType-ESRCHeadPose.html">ESRCHeadPose</a></li><li><a href="module-ESRCType-ESRCHRV.html">ESRCHRV</a></li><li><a href="module-ESRCType-ESRCMat.html">ESRCMat</a></li><li><a href="module-ESRCType-ESRCMeasureEnv.html">ESRCMeasureEnv</a></li><li><a href="module-ESRCType-ESRCPoint2f.html">ESRCPoint2f</a></li><li><a href="module-ESRCType-ESRCProgressRatio.html">ESRCProgressRatio</a></li><li><a href="module-ESRCType-ESRCProperty.html">ESRCProperty</a></li><li><a href="module-ESRCType-ESRCRemoteHR.html">ESRCRemoteHR</a></li><li><a href="module-ESRCType-ESRCValenceFacialExpression.html">ESRCValenceFacialExpression</a></li><li><a href="OpenCVLoader.html">OpenCVLoader</a></li><li><a href="RemoteHREstimator.html">RemoteHREstimator</a></li><li><a href="ValenceFacialExpressionRecognizer.html">ValenceFacialExpressionRecognizer</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Jun 27 2022 16:21:06 GMT+0900 (대한민국 표준시)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
