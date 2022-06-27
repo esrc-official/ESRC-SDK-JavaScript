@@ -1,9 +1,10 @@
 {
   "name": "@esrc/esrc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ESRC JavaScript SDK",
   "main": "./dist/esrc.js",
   "scripts": {
+    "doc": "jsdoc -c jsdoc.json",
     "dev": "./node_modules/.bin/webpack --mode=development",
     "build": "./node_modules/.bin/webpack --mode=production",
     "start": "node app.js"
@@ -15,6 +16,7 @@
     "@babel/preset-env": "^7.18.0",
     "@babel/runtime-corejs3": "^7.18.3",
     "babel-loader": "^8.2.5",
+    "jsdoc": "^3.6.10",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2"
   },

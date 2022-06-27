@@ -59,55 +59,22 @@ class ESRC {
      */
     handler;
     /**
-     * @property {ESRCType.ESRCProperty} property ESRCProperty instance.
+     * @property {ESRCProperty} property ESRCProperty instance.
+     * @static
      */
     static property;
 
-    /**
-     * @property {MeasureEnvAnalyzer} measureEnvAnalyzer Measurement environment analyzer.
-     */
+    // Hide annotations.
     measureEnvAnalyzer;
-    /**
-     * @property {FaceDetector} faceDetector Face detector.
-     */
     faceDetector;
-    /**
-     * @property {FacialLandmarkDetector} facialLandmarkDetector Facial landmark detector.
-     */
     facialLandmarkDetector;
-    /**
-     * @property {FacialActionUnitAnalyzer} facialActionUnitAnalyzer Facial action unit analyzer.
-     */
     facialActionUnitAnalyzer;
-    /**
-     * @property {BasicFacialExpressionRecognizer} basicFacialExpressionRecognizer Basic facial expression recognizer.
-     */
     basicFacialExpressionRecognizer;
-    /**
-     * @property {ValenceFacialExpressionRecognizer} valenceFacialExpressionRecognizer Valence facial expression recognizer.
-     */
     valenceFacialExpressionRecognizer;
-    /**
-     * @property {RemoteHREstimator} remoteHREstimator Remote HR estimator.
-     */
     remoteHREstimator;
-    /**
-     * @property {EngagementRecognizer} engagementRecognizer Engagement recognizer.
-     */
     engagementRecognizer;
-
-    /**
-     * @property {OpenCVLoader} opencvLoader OpenCV loader.
-     */
     opencvLoader;
-    
-    /**
-     * @property {boolean} isRunning Running flag.
-     */
     isRunning = false;
-    /**
-     * @property {ESRCType.ESRCMat} mat Mat instance.
-     */
     mat = new ESRCType.ESRCMat();
 
     /**
@@ -118,12 +85,12 @@ class ESRC {
         this.appId = appId;
 
         // Initialize core
-        this.measureEnvAnalyzer = new MeasureEnvAnalyzer(this.onAnalyzedMeasureEnv);
-        this.faceDetector = new FaceDetector(this.onDetectedFace);
-        this.facialLandmarkDetector = new FacialLandmarkDetector(this.onDetectedFacialLandmark);
-        this.facialActionUnitAnalyzer = new FacialActionUnitAnalyzer(this.onAnalyzedFacialActionUnit);
-        this.basicFacialExpressionRecognizer = new BasicFacialExpressionRecognizer(this.onRecognizedBasicFacialExpression);
-        this.valenceFacialExpressionRecognizer = new ValenceFacialExpressionRecognizer(this.onRecognizedValenceFacialExpression);
+        this.measureEnvAnalyzer = new MeasureEnvAnalyzer();
+        this.faceDetector = new FaceDetector();
+        this.facialLandmarkDetector = new FacialLandmarkDetector();
+        this.facialActionUnitAnalyzer = new FacialActionUnitAnalyzer();
+        this.basicFacialExpressionRecognizer = new BasicFacialExpressionRecognizer();
+        this.valenceFacialExpressionRecognizer = new ValenceFacialExpressionRecognizer();
         this.remoteHREstimator = new RemoteHREstimator();
         this.engagementRecognizer = new EngagementRecognizer();
     }
@@ -133,7 +100,7 @@ class ESRC {
      * @returns {string} SDK Version.
      */
     getSDKVersion() {
-        return "0.1.1";
+        return "0.1.2";
     }
 
     /**
@@ -174,7 +141,8 @@ class ESRC {
 
     /**
      * Load third-patry libraries.
-     * @param {callback} onloadCallback Callback handler.
+     * @param {onloadCallback} onloadCallback Callback handler.
+     * @static
      */
     static loadThirdPartyLibraries(onloadCallback) {
         // Load OpenCV        
@@ -188,8 +156,9 @@ class ESRC {
     /**
      * Initializes ESRC with given application ID.
      * @param {string} appId Application ID.
-     * @param {callback} handler Callback handler.
+     * @param {onloadCallback} handler Callback handler.
      * @returns {boolean} Returns true if the initialization succeeded. Otherwise, false.
+     * @satic
      */
     static initWithApplicationId(appId, handler) {
         let result = true;
@@ -215,9 +184,10 @@ class ESRC {
 
     /**
      * Starts ESRC process.
-     * @param {ESRCType.ESRCProperty} property ESRCProperty instance.
+     * @param {ESRCProperty} property ESRCProperty instance.
      * @param {ESRCHandler} handler ESRCHandler instance.
      * @returns {boolean} Returns true if the start succeeded. Otherwise, false.
+     * @static
      */
     static start(property, handler) {
         let result = true;        
@@ -241,6 +211,7 @@ class ESRC {
     /**
      * Stops ESRC process.
      * @returns {boolean} Returns true if the stop succeeded. Otherwise, false.
+     * @static
      */
     static stop() {
         let result = true;
@@ -258,8 +229,9 @@ class ESRC {
 
     /**
      * Feed frame on ESRC process.
-     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     * @param {ESRCMat} mat ESRCMat instance.
      * @returns {boolean} Returns true if the feed succeeded. Otherwise, false.
+     * @static
      */
     static feed(mat) {
         let result = true;
@@ -299,17 +271,23 @@ class ESRC {
         let ret = true;
 
         // Initialize core
-        ret = this.measureEnvAnalyzer.initialize(ESRC.property !== undefined? ESRC.property.getEnableMeasureEnv() : false);
+        ret = this.measureEnvAnalyzer.initialize(ESRC.property !== undefined? ESRC.property.getEnableMeasureEnv() : false,
+            this.onAnalyzedMeasureEnv);
         if (!ret) return ret;
-        ret = this.faceDetector.initialize(ESRC.property !== undefined? ESRC.property.getEnableFace() : false);
+        ret = this.faceDetector.initialize(ESRC.property !== undefined? ESRC.property.getEnableFace() : false,
+            this.onDetectedFace);
         if (!ret) return ret;
-        ret = this.facialLandmarkDetector.initialize(ESRC.property !== undefined? ESRC.property.getEnableFacialLandmark() : false);
+        ret = this.facialLandmarkDetector.initialize(ESRC.property !== undefined? ESRC.property.getEnableFacialLandmark() : false,
+            this.onDetectedFacialLandmark);
         if (!ret) return ret;
-        ret = this.facialActionUnitAnalyzer.initialize(ESRC.property !== undefined? ESRC.property.getEnableFacialActionUnit() : false);
+        ret = this.facialActionUnitAnalyzer.initialize(ESRC.property !== undefined? ESRC.property.getEnableFacialActionUnit() : false,
+            this.onAnalyzedFacialActionUnit);
         if (!ret) return ret;
-        ret = this.basicFacialExpressionRecognizer.initialize(ESRC.property !== undefined? ESRC.property.getEnableBasicFacialExpression() : false);
+        ret = this.basicFacialExpressionRecognizer.initialize(ESRC.property !== undefined? ESRC.property.getEnableBasicFacialExpression() : false,
+            this.onRecognizedBasicFacialExpression);
         if (!ret) return ret;
-        ret = this.valenceFacialExpressionRecognizer.initialize(ESRC.property !== undefined? ESRC.property.getEnableValenceFacialExpression() : false);
+        ret = this.valenceFacialExpressionRecognizer.initialize(ESRC.property !== undefined? ESRC.property.getEnableValenceFacialExpression() : false,
+            this.onRecognizedValenceFacialExpression);
         if (!ret) return ret;
         ret = this.remoteHREstimator.initialize(ESRC.property !== undefined? ESRC.property.getEnableRemoteHR() : false,
             ESRC.property !== undefined? ESRC.property.getEnableHRV() : false,
@@ -378,7 +356,7 @@ class ESRC {
 
     /**
      * Detects face from frame image.
-     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     * @param {ESRCMat} mat ESRCMat instance.
      */
     detectFace(mat) {
         this.measureEnvAnalyzer.feed(mat);
@@ -387,8 +365,8 @@ class ESRC {
 
     /**
      * Detects facial landmark from face image.
-     * @param {ESRCType.ESRCFace} bbox ESRCFace instance.
-     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     * @param {ESRCFace} bbox ESRCFace instance.
+     * @param {ESRCMat} mat ESRCMat instance.
      */
     detectFacialLandmark(bbox, mat) {        
         this.facialLandmarkDetector.feed(bbox, mat);
@@ -396,7 +374,7 @@ class ESRC {
 
     /**
      * Analyzes facial action unit from facial landmark.
-     * @param {ESRCType.ESRCFacialLandmark} facialLandmark ESRCFacialLandmark instance.
+     * @param {ESRCFacialLandmark} facialLandmark ESRCFacialLandmark instance.
      */
     analyzeFacialActionUnit(facialLandmark) {
         this.facialActionUnitAnalyzer.feed(facialLandmark);
@@ -404,7 +382,7 @@ class ESRC {
 
     /**
      * Recognizes basic facial expression from face image.
-     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     * @param {ESRCMat} mat ESRCMat instance.
      */
     recognizeBasicFacialExpression(mat) {
         this.basicFacialExpressionRecognizer.feed(mat);
@@ -412,7 +390,7 @@ class ESRC {
 
     /**
      * Recognizes valence facial expression from face image.
-     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     * @param {ESRCMat} mat ESRCMat instance.
      */
     recognizeValenceFacialExpression(mat) {
         this.valenceFacialExpressionRecognizer.feed(mat);
@@ -420,7 +398,7 @@ class ESRC {
 
     /**
      * Estimates heart rate from face image.
-     * @param {ESRCType.ESRCMat} mat ESRCMat instance.
+     * @param {ESRCMat} mat ESRCMat instance.
      */
     estimateRemoteHR(mat) {
         this.remoteHREstimator.feed(mat);
@@ -428,7 +406,7 @@ class ESRC {
 
     /**
      * Recognizes engagement from heart rate in time domain.
-     * @param {ESRCType.ESRCRemoteHR|ESRCHRV} arg ESRCRemoteHR or ESRCHRV instance.
+     * @param {ESRCRemoteHR|ESRCHRV} arg ESRCRemoteHR or ESRCHRV instance.
      */
     recognizeEngagement(arg) {
         this.engagementRecognizer.feed(arg)
@@ -436,7 +414,7 @@ class ESRC {
 
     /**
      * A callback for when measurement environment is analyzed.
-     * @param {ESRCType.ESRCMeasureEnv} measureEnv ESRCMeasureEnv instance.
+     * @param {ESRCMeasureEnv} measureEnv ESRCMeasureEnv instance.
      */
     onAnalyzedMeasureEnv(measureEnv) {
         // Callback
@@ -447,10 +425,10 @@ class ESRC {
 
     /**
      * A callback for when face is detected.
-     * @param {ESRCType.ESRCFace} bbox Bounding box of detected face.
-     * @param {ESRCType.ESRCMat} bboxMat Mat instance for bounding box of detected face.
-     * @param {ESRCType.ESRCFace} sbox Square box of detected face.
-     * @param {ESRCType.ESRCMat} sboxMat Mat instance for square box of detected face.
+     * @param {ESRCFace} bbox Bounding box of detected face.
+     * @param {ESRCMat} bboxMat Mat instance for bounding box of detected face.
+     * @param {ESRCFace} sbox Square box of detected face.
+     * @param {ESRCMat} sboxMat Mat instance for square box of detected face.
      */
     onDetectedFace(bbox, bboxMat, sbox, sboxMat) {
         // If face is detected
@@ -476,7 +454,7 @@ class ESRC {
     
     /**
      * A callback for when facial landmark is detected.
-     * @param {ESRCType.ESRCFacialLandmark} facialLandmark ESRCFacialLandmark instance.
+     * @param {ESRCFacialLandmark} facialLandmark ESRCFacialLandmark instance.
      */
     onDetectedFacialLandmark(facialLandmark) {
         // Analyze facial action unit
@@ -490,7 +468,7 @@ class ESRC {
 
     /**
      * A callback for when facial action unit is analyzed.
-     * @param {ESRCType.ESRCFacialActionUnit} facialActionUnit ESRCFacialActionUnit instance.
+     * @param {ESRCFacialActionUnit} facialActionUnit ESRCFacialActionUnit instance.
      */
     onAnalyzedFacialActionUnit(facialActionUnit) {
         // Callback
@@ -501,7 +479,7 @@ class ESRC {
 
     /**
      * A callback for when basic facial expression is recognized.
-     * @param {ESRCType.ESRCBasicFacialExpression} facialExpression ESRCBasicFacialExpression instance.
+     * @param {ESRCBasicFacialExpression} facialExpression ESRCBasicFacialExpression instance.
      */
     onRecognizedBasicFacialExpression(facialExpression) {
         // Callback
@@ -512,7 +490,7 @@ class ESRC {
 
     /**
      * A callback for when valence facial expression is recognized.
-     * @param {ESRCType.ESRCValenceFacialExpression} facialExpression ESRCValenceFacialExpression instance.
+     * @param {ESRCValenceFacialExpression} facialExpression ESRCValenceFacialExpression instance.
      */
     onRecognizedValenceFacialExpression(facialExpression) {
         // Callback
@@ -523,7 +501,7 @@ class ESRC {
 
     /**
      * A callback for when progress ratio on remote hr is changed.
-     * @param {ESRCType.ESRCProgressRatio} progressRatio ESRCProgressRatio instance.
+     * @param {ESRCProgressRatio} progressRatio ESRCProgressRatio instance.
      */    
     didChangedProgressRatioOnRemoteHR(progressRatio) {
         // Callback
@@ -534,7 +512,7 @@ class ESRC {
 
     /**
      * A callback for when remote hr is estimated.
-     * @param {ESRCType.ESRCRemoteHR} remoteHR ESRCRemoteHR instance.
+     * @param {ESRCRemoteHR} remoteHR ESRCRemoteHR instance.
      */
     onEstimatedRemoteHR(remoteHR) {
         // Recognize engagement in time domain
@@ -550,7 +528,7 @@ class ESRC {
 
     /**
      * A callback for when progress ratio on HRV is changed.
-     * @param {ESRCType.ESRCProgressRatio} progressRatio ESRCProgressRatio instance.
+     * @param {ESRCProgressRatio} progressRatio ESRCProgressRatio instance.
      */
     didChangedProgressRatioOnHRV(progressRatio) {
         // Callback
@@ -561,7 +539,7 @@ class ESRC {
 
     /**
      * A callback for when HRV is analyzed.
-     * @param {ESRCType.ESRCHRV} hrv ESRCHRV instance.
+     * @param {ESRCHRV} hrv ESRCHRV instance.
      */
     onAnalyzedHRV(hrv) {
         // Recognize engagement in frequency domain
@@ -577,7 +555,7 @@ class ESRC {
 
     /**
      * A callback for when engagement is recognized.
-     * @param {ESRCType.ESRCEngagement} engagement 
+     * @param {ESRCEngagement} engagement 
      */
     onRecognizedEngagement(engagement) {
         // Callback
@@ -586,6 +564,14 @@ class ESRC {
         }
     }
 }
+
+/**
+ * A callback for when opencv.js is loaded.
+ * @callback onloadCallback
+ */
+function onloadCallback() {
+    // Implement this function.
+};
 
 module.exports = ESRC;</code></pre>
         </article>
@@ -597,13 +583,13 @@ module.exports = ESRC;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ESRCType.html">ESRCType</a></li></ul><h3>Classes</h3><ul><li><a href="APIClient.html">APIClient</a></li><li><a href="BasicFacialExpressionRecognizer.html">BasicFacialExpressionRecognizer</a></li><li><a href="EngagementRecognizer.html">EngagementRecognizer</a></li><li><a href="ESRC.html">ESRC</a></li><li><a href="ESRCHandler.html">ESRCHandler</a></li><li><a href="ESRCLicense.html">ESRCLicense</a></li><li><a href="FaceDetector.html">FaceDetector</a></li><li><a href="FacialActionUnitAnalyzer.html">FacialActionUnitAnalyzer</a></li><li><a href="FacialLandmarkDetector.html">FacialLandmarkDetector</a></li><li><a href="FileManager.html">FileManager</a></li><li><a href="MeasureEnvAnalyzer.html">MeasureEnvAnalyzer</a></li><li><a href="module-ESRCType-ESRCAttention.html">ESRCAttention</a></li><li><a href="module-ESRCType-ESRCBasicFacialExpression.html">ESRCBasicFacialExpression</a></li><li><a href="module-ESRCType-ESRCEngagement.html">ESRCEngagement</a></li><li><a href="module-ESRCType-ESRCFace.html">ESRCFace</a></li><li><a href="module-ESRCType-ESRCFacialActionUnit.html">ESRCFacialActionUnit</a></li><li><a href="module-ESRCType-ESRCFacialLandmark.html">ESRCFacialLandmark</a></li><li><a href="module-ESRCType-ESRCHeadPose.html">ESRCHeadPose</a></li><li><a href="module-ESRCType-ESRCHRV.html">ESRCHRV</a></li><li><a href="module-ESRCType-ESRCMat.html">ESRCMat</a></li><li><a href="module-ESRCType-ESRCMeasureEnv.html">ESRCMeasureEnv</a></li><li><a href="module-ESRCType-ESRCPoint2f.html">ESRCPoint2f</a></li><li><a href="module-ESRCType-ESRCProgressRatio.html">ESRCProgressRatio</a></li><li><a href="module-ESRCType-ESRCProperty.html">ESRCProperty</a></li><li><a href="module-ESRCType-ESRCRemoteHR.html">ESRCRemoteHR</a></li><li><a href="module-ESRCType-ESRCValenceFacialExpression.html">ESRCValenceFacialExpression</a></li><li><a href="OpenCVLoader.html">OpenCVLoader</a></li><li><a href="RemoteHREstimator.html">RemoteHREstimator</a></li><li><a href="ValenceFacialExpressionRecognizer.html">ValenceFacialExpressionRecognizer</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ESRCType.html">ESRCType</a></li></ul><h3>Classes</h3><ul><li><a href="ESRC.html">ESRC</a></li><li><a href="ESRCHandler.html">ESRCHandler</a></li><li><a href="module-ESRCType-ESRCAttention.html">ESRCAttention</a></li><li><a href="module-ESRCType-ESRCBasicFacialExpression.html">ESRCBasicFacialExpression</a></li><li><a href="module-ESRCType-ESRCEngagement.html">ESRCEngagement</a></li><li><a href="module-ESRCType-ESRCFace.html">ESRCFace</a></li><li><a href="module-ESRCType-ESRCFacialActionUnit.html">ESRCFacialActionUnit</a></li><li><a href="module-ESRCType-ESRCFacialLandmark.html">ESRCFacialLandmark</a></li><li><a href="module-ESRCType-ESRCHeadPose.html">ESRCHeadPose</a></li><li><a href="module-ESRCType-ESRCHRV.html">ESRCHRV</a></li><li><a href="module-ESRCType-ESRCMat.html">ESRCMat</a></li><li><a href="module-ESRCType-ESRCMeasureEnv.html">ESRCMeasureEnv</a></li><li><a href="module-ESRCType-ESRCPoint2f.html">ESRCPoint2f</a></li><li><a href="module-ESRCType-ESRCProgressRatio.html">ESRCProgressRatio</a></li><li><a href="module-ESRCType-ESRCProperty.html">ESRCProperty</a></li><li><a href="module-ESRCType-ESRCRemoteHR.html">ESRCRemoteHR</a></li><li><a href="module-ESRCType-ESRCValenceFacialExpression.html">ESRCValenceFacialExpression</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Jun 27 2022 16:21:06 GMT+0900 (대한민국 표준시)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Jun 27 2022 16:53:44 GMT+0900 (대한민국 표준시)
 </footer>
 
 <script> prettyPrint(); </script>
