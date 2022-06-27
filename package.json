@@ -1,8 +1,14 @@
 {
   "name": "@esrc/esrc",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "ESRC JavaScript SDK",
   "main": "./dist/esrc.js",
+  "homepage": "esrc.co.kr",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/esrc-official/ESRC-SDK-JavaScript"
+  },
   "scripts": {
     "doc": "jsdoc -c jsdoc.json",
     "dev": "./node_modules/.bin/webpack --mode=development",
