@@ -1,6 +1,6 @@
 {
   "name": "@esrc/esrc",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "ESRC JavaScript SDK",
   "main": "./dist/esrc.js",
   "homepage": "esrc.co.kr",

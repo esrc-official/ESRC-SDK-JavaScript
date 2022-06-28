@@ -181,7 +181,7 @@ ESRC.stop()
 
 ## Changelogs
 
-### v0.1.4 (JUNE 27, 2022)
+### v0.1.5 (JUNE 28, 2022)
 
 If you want to check the record of other versions, go to [Change Log](https://github.com/esrc-official/ESRC-SDK-JavaScript/blob/master/CHANGELOG.md).
 
